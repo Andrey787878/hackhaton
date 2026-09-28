@@ -11,7 +11,7 @@ from docx.shared import Cm, Pt, RGBColor
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "docs" / "mini-report-backend.docx"
 FIGURES = ROOT / "docs" / "figures"
-BRANCH = "https://github.com/Andrey787878/hackhaton/tree/codex/backend-mini-report"
+BRANCH = "https://github.com/Andrey787878/hackhaton/tree/backend"
 
 
 def font(run, *, size=14, bold=False, name="Times New Roman"):
@@ -161,7 +161,7 @@ def build():
 
     heading(doc, "2 ССЫЛКА НА АКТУАЛЬНЫЙ КОД")
     text(doc, "Код серверной части опубликован в открытом репозитории GitHub "
-         "в ветке codex/backend-mini-report. Адрес ветки:")
+         "в ветке backend. Адрес ветки:")
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.LEFT
     p.paragraph_format.first_line_indent = Cm(0)
@@ -218,18 +218,31 @@ def build():
          "контракты API. Каталог alembic/versions хранит историю схемы БД, "
          "tests/ — автоматические проверки.")
 
-    doc.add_page_break()
     heading(doc, "5 ПОДТВЕРЖДЕНИЕ РАБОТОСПОСОБНОСТИ")
-    text(doc, "На рисунке 1 показан Swagger UI запущенного сервера с маршрутами "
-         "авторизации и управления доступом. OpenAPI доступен по адресу /openapi.json.")
-    picture(doc, "swagger.png", 1, "Интерфейс Swagger UI серверного API")
-    text(doc, "На рисунке 2 приведён успешный ответ GET /api/v1/health: "
-         "сервер и подключение к PostgreSQL исправны.")
-    picture(doc, "health.png", 2, "Ответ проверки API и базы данных")
-    p = text(doc, "На рисунке 3 представлен ответ публичного GET-запроса рейтинга "
+    text(doc, "Swagger UI запущенного сервера содержит 73 операции в восьми разделах. "
+         "На рисунках 1–4 последовательно показаны все группы API. Полная схема "
+         "OpenAPI доступна по адресу /openapi.json.")
+    for number, filename, description, caption in (
+        (1, "swagger-1.png", "На рисунке 1 показаны авторизация и начало управления ролями и правами.",
+         "Swagger UI: авторизация и управление доступом, часть 1"),
+        (2, "swagger-2.png", "На рисунке 2 показаны оставшиеся маршруты прав доступа и маршруты хакатонов.",
+         "Swagger UI: управление доступом, часть 2, и хакатоны"),
+        (3, "swagger-3.png", "На рисунке 3 показаны команды, сдача решений и экспертная оценка.",
+         "Swagger UI: команды, решения и оценка"),
+        (4, "swagger-4.png", "На рисунке 4 показаны уведомления и проверка работоспособности.",
+         "Swagger UI: уведомления и проверка API"),
+    ):
+        p = text(doc, description)
+        p.paragraph_format.keep_with_next = True
+        picture(doc, filename, number, caption)
+    p = text(doc, "На рисунке 5 приведён успешный ответ GET /api/v1/health: "
+             "сервер и подключение к PostgreSQL исправны.")
+    p.paragraph_format.keep_with_next = True
+    picture(doc, "health.png", 5, "Ответ проверки API и базы данных")
+    p = text(doc, "На рисунке 6 представлен ответ публичного GET-запроса рейтинга "
              "для кейса № 3: команда получила итог 85,00 балла по весовым критериям.")
     p.paragraph_format.keep_with_next = True
-    picture(doc, "leaderboard.png", 3, "Публичный рейтинг по результатам экспертной оценки")
+    picture(doc, "leaderboard.png", 6, "Публичный рейтинг по результатам экспертной оценки")
     text(doc, "Дополнительно выполнены 87 интеграционных тестов. Сквозной сценарий "
          "проверил публикацию хакатона, создание команды, сдачу архива, назначение "
          "эксперта, оценку и рейтинг. Сдача после дедлайна отклонена с HTTP 409; "
