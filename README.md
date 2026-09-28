@@ -9,6 +9,10 @@
 Журнал уведомлений и сквозная проверка дополняют серверные сценарии.
 Подзадачи и критерии готовности: [план разработки](docs/PLAN.md).
 
+Мини-отчёт по серверной части: [DOCX](docs/mini-report-backend.docx) и
+[PDF](docs/mini-report-backend.pdf). Подтверждающие скриншоты находятся в
+[docs/figures](docs/figures).
+
 ## Стек
 
 - Python 3.11 + FastAPI — типизированный API и Swagger/OpenAPI.
