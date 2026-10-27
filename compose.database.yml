@@ -1,0 +1,6 @@
+# Optional local access for psql, pgAdmin and DBeaver. The main deployment
+# keeps PostgreSQL private; this override publishes it only on loopback.
+services:
+  db:
+    ports:
+      - '127.0.0.1:${POSTGRES_LOCAL_PORT:-5432}:5432'

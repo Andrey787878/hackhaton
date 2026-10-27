@@ -11,6 +11,8 @@ settings = get_settings()
 engine = create_engine(
     settings.database_url,
     pool_pre_ping=True,
+    # API timestamps must not depend on the database server's local timezone.
+    connect_args={"options": "-c timezone=UTC", "connect_timeout": 5},
 )
 
 Base = declarative_base()
