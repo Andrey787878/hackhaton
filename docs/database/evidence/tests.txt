@@ -1,0 +1,403 @@
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.54kB done
+#1 DONE 0.0s
+
+#2 [minio internal] load build definition from Dockerfile.minio
+#2 transferring dockerfile: 764B done
+#2 DONE 0.0s
+
+#3 [migrate internal] load build definition from Dockerfile
+#3 transferring dockerfile: 1.19kB done
+#3 DONE 0.0s
+
+#4 [migrate] resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#4 ...
+
+#5 [minio internal] load metadata for docker.io/library/golang:1.24.8-bookworm
+#5 DONE 0.3s
+
+#4 [storage-init] resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#4 DONE 0.3s
+
+#6 [minio internal] load metadata for docker.io/library/debian:bookworm-slim
+#6 DONE 0.3s
+
+#7 [minio internal] load .dockerignore
+#7 transferring context: 141B done
+#7 DONE 0.0s
+
+#8 [storage-init] docker-image://docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+#8 resolve docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e 0.0s done
+#8 CACHED
+
+#9 [minio stage-1 1/3] FROM docker.io/library/debian:bookworm-slim@sha256:7ff6ba31527b9e336162fa061746c366c4b2032f4d2cff2078bea43f78efe3f8
+#9 resolve docker.io/library/debian:bookworm-slim@sha256:7ff6ba31527b9e336162fa061746c366c4b2032f4d2cff2078bea43f78efe3f8 0.0s done
+#9 DONE 0.0s
+
+#10 [minio build 1/4] FROM docker.io/library/golang:1.24.8-bookworm@sha256:4ed690d6649d63c312b99a6120025ec79ce3b542968a37da53d6236c7c61a848
+#10 resolve docker.io/library/golang:1.24.8-bookworm@sha256:4ed690d6649d63c312b99a6120025ec79ce3b542968a37da53d6236c7c61a848 0.0s done
+#10 DONE 0.0s
+
+#11 [minio stage-1 2/3] RUN groupadd --gid 10001 minio && useradd --uid 10001 --gid 10001 --no-create-home minio     && mkdir /data && chown minio:minio /data
+#11 CACHED
+
+#12 [minio build 2/4] RUN git clone --depth 1 --branch RELEASE.2025-10-15T17-29-55Z https://github.com/minio/minio.git /src
+#12 CACHED
+
+#13 [minio build 4/4] RUN CGO_ENABLED=0 go build -trimpath -ldflags='-s -w' -o /out/minio .
+#13 CACHED
+
+#14 [minio build 3/4] WORKDIR /src
+#14 CACHED
+
+#15 [minio stage-1 3/3] COPY --from=build /out/minio /usr/local/bin/minio
+#15 CACHED
+
+#16 [minio] exporting to image
+#16 exporting layers done
+#16 exporting manifest sha256:7e086e00c9af4d51cc078bd580b90e22633a8f1e9057fcec7fec76b142bdf89c done
+#16 exporting config sha256:03c7491a78445bde4f276330ff4a39a0a19a1d1db76ea49311dc7d805722efd4 done
+#16 exporting attestation manifest sha256:ff544186537e83903529c6e0e44b1d6deadfa40e2290a5c3e2110679119a5be4 done
+#16 exporting manifest list sha256:f44febe6ee664ff2669ea31e6256350c91091c0012a6090b735a245873cf17d0 done
+#16 naming to docker.io/library/hackhaton-db-ci-minio:latest done
+#16 unpacking to docker.io/library/hackhaton-db-ci-minio:latest done
+#16 DONE 0.0s
+
+#17 [migrate internal] load build definition from Dockerfile
+#17 transferring dockerfile: 1.19kB done
+#17 DONE 0.0s
+
+#18 [storage-init internal] load build definition from Dockerfile
+#18 transferring dockerfile: 1.19kB done
+#18 DONE 0.0s
+
+#19 [minio] resolving provenance for metadata file
+#19 DONE 0.0s
+
+#20 [storage-init internal] load metadata for docker.io/library/python:3.11-slim
+#20 DONE 0.3s
+
+#21 [migrate internal] load .dockerignore
+#21 transferring context: 141B done
+#21 DONE 0.0s
+
+#22 [storage-init internal] load .dockerignore
+#22 transferring context: 141B done
+#22 DONE 0.0s
+
+#23 [migrate internal] load build context
+#23 transferring context: 2.44kB done
+#23 DONE 0.0s
+
+#24 [storage-init internal] load build context
+#24 transferring context: 2.44kB done
+#24 DONE 0.0s
+
+#25 [storage-init deps 1/4] FROM docker.io/library/python:3.11-slim@sha256:ae952e0a57138a4317b9b61caaa19a8217c2f356803f8d7e63aad08769950937
+#25 resolve docker.io/library/python:3.11-slim@sha256:ae952e0a57138a4317b9b61caaa19a8217c2f356803f8d7e63aad08769950937 0.0s done
+#25 DONE 0.0s
+
+#26 [storage-init runtime 3/8] RUN groupadd --gid 1000 app &&     useradd --uid 1000 --gid 1000 --create-home --shell /usr/sbin/nologin app
+#26 CACHED
+
+#27 [storage-init runtime 6/8] COPY --chown=1000:1000 alembic /app/alembic
+#27 CACHED
+
+#28 [storage-init deps 2/4] WORKDIR /build
+#28 CACHED
+
+#29 [storage-init runtime 5/8] COPY --chown=1000:1000 app /app/app
+#29 CACHED
+
+#30 [storage-init deps 3/4] COPY requirements.txt .
+#30 CACHED
+
+#31 [storage-init deps 4/4] RUN --mount=type=cache,target=/root/.cache/pip     pip install --no-compile -r requirements.txt -t /deps
+#31 CACHED
+
+#32 [storage-init runtime 2/8] WORKDIR /app
+#32 CACHED
+
+#33 [storage-init runtime 4/8] COPY --from=deps /deps /deps
+#33 CACHED
+
+#34 [storage-init runtime 7/8] COPY --chown=1000:1000 alembic.ini /app/alembic.ini
+#34 CACHED
+
+#35 [migrate runtime 8/8] COPY --chown=1000:1000 scripts /app/scripts
+#35 CACHED
+
+#36 [storage-init] exporting to image
+#36 exporting layers done
+#36 exporting manifest sha256:96c932e23d023dcbec96ad3c1a9661fc45af0205f074ea030e6fad4bbaada81b done
+#36 exporting config sha256:9ee5cc49a8e657b55526d39372de1e8d6f3c625bc53ee96af0df0c0c22640e56 done
+#36 exporting attestation manifest sha256:ba39f92cab1885b3cd746c9501e63dfcff494f61d68e9fa0f033bbf23559488b done
+#36 exporting manifest list sha256:e218d6777213c0843c9d04b38716529a1f82aba208655fbccc28ebb2eac4228d done
+#36 naming to docker.io/library/hackhaton-db-ci-storage-init:latest done
+#36 unpacking to docker.io/library/hackhaton-db-ci-storage-init:latest done
+#36 DONE 0.1s
+
+#37 [migrate] exporting to image
+#37 exporting layers done
+#37 exporting manifest sha256:9c80d770e7996647a0a93786a8aeb534055b6b26c91f46a56dfd03f22b7626c7 done
+#37 exporting config sha256:6b9a0fb769764a6266520b5c092cf4a3341477d3ca07b1217dbc53d0df8f4f39 done
+#37 exporting attestation manifest sha256:d4d78513b6caae0446e695e70d46145502e967db90a94a780064a01be7dbf08d done
+#37 exporting manifest list sha256:363727e82a99c65692e6473cdf4763cf1b9923dbce2a3bb768339d433b51d72f done
+#37 naming to docker.io/library/hackhaton-db-ci-migrate:latest done
+#37 unpacking to docker.io/library/hackhaton-db-ci-migrate:latest done
+#37 DONE 0.1s
+
+#38 [storage-init] resolving provenance for metadata file
+#38 DONE 0.0s
+
+#39 [migrate] resolving provenance for metadata file
+#39 DONE 0.0s
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.95kB done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.19kB done
+#2 DONE 0.0s
+
+#3 resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#3 DONE 0.1s
+
+#4 docker-image://docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+#4 resolve docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e 0.0s done
+#4 CACHED
+
+#5 [internal] load metadata for docker.io/library/python:3.11-slim
+#5 DONE 0.1s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 141B done
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 transferring context: 68.90kB done
+#7 DONE 0.0s
+
+#8 [deps 1/4] FROM docker.io/library/python:3.11-slim@sha256:ae952e0a57138a4317b9b61caaa19a8217c2f356803f8d7e63aad08769950937
+#8 resolve docker.io/library/python:3.11-slim@sha256:ae952e0a57138a4317b9b61caaa19a8217c2f356803f8d7e63aad08769950937 0.0s done
+#8 DONE 0.0s
+
+#9 [deps 3/4] COPY requirements.txt .
+#9 CACHED
+
+#10 [deps 2/4] WORKDIR /build
+#10 CACHED
+
+#11 [deps 4/4] RUN --mount=type=cache,target=/root/.cache/pip     pip install --no-compile -r requirements.txt -t /deps
+#11 CACHED
+
+#12 [runtime 2/8] WORKDIR /app
+#12 CACHED
+
+#13 [runtime 7/8] COPY --chown=1000:1000 alembic.ini /app/alembic.ini
+#13 CACHED
+
+#14 [runtime 4/8] COPY --from=deps /deps /deps
+#14 CACHED
+
+#15 [runtime 5/8] COPY --chown=1000:1000 app /app/app
+#15 CACHED
+
+#16 [runtime 6/8] COPY --chown=1000:1000 alembic /app/alembic
+#16 CACHED
+
+#17 [runtime 3/8] RUN groupadd --gid 1000 app &&     useradd --uid 1000 --gid 1000 --create-home --shell /usr/sbin/nologin app
+#17 CACHED
+
+#18 [runtime 8/8] COPY --chown=1000:1000 scripts /app/scripts
+#18 CACHED
+
+#19 [test-deps 1/2] COPY requirements-dev.txt .
+#19 DONE 0.1s
+
+#20 [test-deps 2/2] RUN --mount=type=cache,target=/root/.cache/pip     pip install --no-compile -r requirements-dev.txt -t /test-deps
+#20 0.927 Collecting fastapi<1.0,>=0.110 (from -r requirements.txt (line 1))
+#20 0.929   Using cached fastapi-0.162.0-py3-none-any.whl.metadata (26 kB)
+#20 1.004 Collecting uvicorn<1.0,>=0.30 (from uvicorn[standard]<1.0,>=0.30->-r requirements.txt (line 2))
+#20 1.006   Using cached uvicorn-0.54.0-py3-none-any.whl.metadata (6.6 kB)
+#20 1.500 Collecting sqlalchemy<3.0,>=2.0 (from -r requirements.txt (line 3))
+#20 1.502   Using cached sqlalchemy-2.1.6-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (9.7 kB)
+#20 1.549 Collecting alembic<2.0,>=1.13 (from -r requirements.txt (line 4))
+#20 1.552   Using cached alembic-1.20.1-py3-none-any.whl.metadata (7.3 kB)
+#20 1.592 Collecting psycopg<4.0,>=3.2 (from psycopg[binary]<4.0,>=3.2->-r requirements.txt (line 5))
+#20 1.593   Using cached psycopg-3.3.6-py3-none-any.whl.metadata (4.4 kB)
+#20 1.626 Collecting pydantic-settings<3.0,>=2.2 (from -r requirements.txt (line 6))
+#20 1.629   Using cached pydantic_settings-2.16.1-py3-none-any.whl.metadata (4.0 kB)
+#20 1.668 Collecting PyJWT<3.0,>=2.8 (from -r requirements.txt (line 7))
+#20 1.669   Using cached pyjwt-2.15.1-py3-none-any.whl.metadata (3.5 kB)
+#20 1.720 Collecting bcrypt<5.0,>=4.0 (from -r requirements.txt (line 8))
+#20 1.721   Using cached bcrypt-4.3.0-cp39-abi3-manylinux_2_34_x86_64.whl.metadata (10 kB)
+#20 1.740 Collecting email-validator<3.0,>=2.1 (from -r requirements.txt (line 9))
+#20 1.742   Using cached email_validator-2.3.0-py3-none-any.whl.metadata (26 kB)
+#20 2.325 Collecting boto3<2.0,>=1.35 (from -r requirements.txt (line 10))
+#20 2.326   Using cached boto3-1.43.119-py3-none-any.whl.metadata (6.6 kB)
+#20 2.348 Collecting python-multipart<1.0,>=0.0.12 (from -r requirements.txt (line 11))
+#20 2.349   Using cached python_multipart-0.0.32-py3-none-any.whl.metadata (2.1 kB)
+#20 2.413 Collecting pytest<9,>=8 (from -r requirements-dev.txt (line 2))
+#20 2.436   Downloading pytest-8.4.2-py3-none-any.whl.metadata (7.7 kB)
+#20 2.470 Collecting httpx<1,>=0.27 (from -r requirements-dev.txt (line 3))
+#20 2.475   Downloading httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+#20 2.550 Collecting starlette>=0.46.0 (from fastapi<1.0,>=0.110->-r requirements.txt (line 1))
+#20 2.552   Using cached starlette-1.10.0-py3-none-any.whl.metadata (6.6 kB)
+#20 2.700 Collecting pydantic>=2.9.0 (from fastapi<1.0,>=0.110->-r requirements.txt (line 1))
+#20 2.702   Using cached pydantic-2.14.1-py3-none-any.whl.metadata (133 kB)
+#20 2.732 Collecting typing-extensions>=4.8.0 (from fastapi<1.0,>=0.110->-r requirements.txt (line 1))
+#20 2.733   Using cached typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+#20 2.747 Collecting typing-inspection>=0.4.2 (from fastapi<1.0,>=0.110->-r requirements.txt (line 1))
+#20 2.748   Using cached typing_inspection-0.4.4-py3-none-any.whl.metadata (2.6 kB)
+#20 2.760 Collecting annotated-doc>=0.0.2 (from fastapi<1.0,>=0.110->-r requirements.txt (line 1))
+#20 2.762   Using cached annotated_doc-0.0.5-py3-none-any.whl.metadata (6.5 kB)
+#20 2.794 Collecting opentelemetry-api>=1.44.0 (from fastapi<1.0,>=0.110->-r requirements.txt (line 1))
+#20 2.795   Using cached opentelemetry_api-1.45.1-py3-none-any.whl.metadata (1.4 kB)
+#20 2.827 Collecting click>=7.0 (from uvicorn<1.0,>=0.30->uvicorn[standard]<1.0,>=0.30->-r requirements.txt (line 2))
+#20 2.828   Using cached click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+#20 2.842 Collecting h11>=0.8 (from uvicorn<1.0,>=0.30->uvicorn[standard]<1.0,>=0.30->-r requirements.txt (line 2))
+#20 2.843   Using cached h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+#20 2.892 Collecting Mako (from alembic<2.0,>=1.13->-r requirements.txt (line 4))
+#20 2.893   Using cached mako-1.4.3-py3-none-any.whl.metadata (2.9 kB)
+#20 2.953 Collecting python-dotenv>=1.2.2 (from pydantic-settings<3.0,>=2.2->-r requirements.txt (line 6))
+#20 2.954   Using cached python_dotenv-1.2.4-py3-none-any.whl.metadata (29 kB)
+#20 2.989 Collecting dnspython>=2.0.0 (from email-validator<3.0,>=2.1->-r requirements.txt (line 9))
+#20 2.990   Using cached dnspython-2.9.0-py3-none-any.whl.metadata (5.7 kB)
+#20 3.011 Collecting idna>=2.0.0 (from email-validator<3.0,>=2.1->-r requirements.txt (line 9))
+#20 3.012   Using cached idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+#20 3.643 Collecting botocore<1.44.0,>=1.43.119 (from boto3<2.0,>=1.35->-r requirements.txt (line 10))
+#20 3.645   Using cached botocore-1.43.119-py3-none-any.whl.metadata (5.6 kB)
+#20 3.663 Collecting jmespath<2.0.0,>=0.7.1 (from boto3<2.0,>=1.35->-r requirements.txt (line 10))
+#20 3.664   Using cached jmespath-1.1.0-py3-none-any.whl.metadata (7.6 kB)
+#20 3.698 Collecting s3transfer<0.20.0,>=0.19.0 (from boto3<2.0,>=1.35->-r requirements.txt (line 10))
+#20 3.699   Using cached s3transfer-0.19.3-py3-none-any.whl.metadata (1.7 kB)
+#20 3.725 Collecting iniconfig>=1 (from pytest<9,>=8->-r requirements-dev.txt (line 2))
+#20 3.728   Downloading iniconfig-2.3.1-py3-none-any.whl.metadata (2.8 kB)
+#20 3.757 Collecting packaging>=20 (from pytest<9,>=8->-r requirements-dev.txt (line 2))
+#20 3.760   Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+#20 3.782 Collecting pluggy<2,>=1.5 (from pytest<9,>=8->-r requirements-dev.txt (line 2))
+#20 3.785   Downloading pluggy-1.7.0-py3-none-any.whl.metadata (5.0 kB)
+#20 3.815 Collecting pygments>=2.7.2 (from pytest<9,>=8->-r requirements-dev.txt (line 2))
+#20 3.818   Downloading pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+#20 3.910 Collecting anyio (from httpx<1,>=0.27->-r requirements-dev.txt (line 3))
+#20 3.911   Using cached anyio-4.15.1-py3-none-any.whl.metadata (4.7 kB)
+#20 3.937 Collecting certifi (from httpx<1,>=0.27->-r requirements-dev.txt (line 3))
+#20 3.940   Downloading certifi-2026.10.23-py3-none-any.whl.metadata (2.5 kB)
+#20 3.969 Collecting httpcore==1.* (from httpx<1,>=0.27->-r requirements-dev.txt (line 3))
+#20 3.972   Downloading httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+#20 4.177 Collecting psycopg-binary==3.3.6 (from psycopg[binary]<4.0,>=3.2->-r requirements.txt (line 5))
+#20 4.178   Using cached psycopg_binary-3.3.6-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.7 kB)
+#20 4.236 Collecting httptools>=0.8.0 (from uvicorn[standard]<1.0,>=0.30->-r requirements.txt (line 2))
+#20 4.237   Using cached httptools-0.9.0-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (3.5 kB)
+#20 4.283 Collecting pyyaml>=5.1 (from uvicorn[standard]<1.0,>=0.30->-r requirements.txt (line 2))
+#20 4.284   Using cached pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+#20 4.333 Collecting uvloop>=0.15.1 (from uvicorn[standard]<1.0,>=0.30->-r requirements.txt (line 2))
+#20 4.334   Using cached uvloop-0.23.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (5.1 kB)
+#20 4.424 Collecting watchfiles>=0.20 (from uvicorn[standard]<1.0,>=0.30->-r requirements.txt (line 2))
+#20 4.426   Using cached watchfiles-1.3.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.9 kB)
+#20 4.643 Collecting websockets>=13.0 (from uvicorn[standard]<1.0,>=0.30->-r requirements.txt (line 2))
+#20 4.645   Using cached websockets-17.3-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (6.3 kB)
+#20 4.672 Collecting python-dateutil<3.0.0,>=2.1 (from botocore<1.44.0,>=1.43.119->boto3<2.0,>=1.35->-r requirements.txt (line 10))
+#20 4.674   Using cached python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+#20 4.722 Collecting urllib3!=2.2.0,<3,>=1.25.4 (from botocore<1.44.0,>=1.43.119->boto3<2.0,>=1.35->-r requirements.txt (line 10))
+#20 4.723   Using cached urllib3-2.8.0-py3-none-any.whl.metadata (7.4 kB)
+#20 4.797 Collecting annotated-types>=0.6.0 (from pydantic>=2.9.0->fastapi<1.0,>=0.110->-r requirements.txt (line 1))
+#20 4.798   Using cached annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+#20 5.690 Collecting pydantic-core==2.50.1 (from pydantic>=2.9.0->fastapi<1.0,>=0.110->-r requirements.txt (line 1))
+#20 5.692   Using cached pydantic_core-2.50.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.5 kB)
+#20 6.046 Collecting MarkupSafe>=2.0 (from Mako->alembic<2.0,>=1.13->-r requirements.txt (line 4))
+#20 6.047   Using cached markupsafe-3.0.4-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+#20 6.081 Collecting six>=1.5 (from python-dateutil<3.0.0,>=2.1->botocore<1.44.0,>=1.43.119->boto3<2.0,>=1.35->-r requirements.txt (line 10))
+#20 6.082   Using cached six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+#20 6.108 Using cached fastapi-0.162.0-py3-none-any.whl (148 kB)
+#20 6.109 Using cached uvicorn-0.54.0-py3-none-any.whl (87 kB)
+#20 6.111 Using cached sqlalchemy-2.1.6-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (4.7 MB)
+#20 6.119 Using cached alembic-1.20.1-py3-none-any.whl (270 kB)
+#20 6.120 Using cached psycopg-3.3.6-py3-none-any.whl (215 kB)
+#20 6.122 Using cached pydantic_settings-2.16.1-py3-none-any.whl (80 kB)
+#20 6.123 Using cached pyjwt-2.15.1-py3-none-any.whl (33 kB)
+#20 6.124 Using cached bcrypt-4.3.0-cp39-abi3-manylinux_2_34_x86_64.whl (284 kB)
+#20 6.126 Using cached email_validator-2.3.0-py3-none-any.whl (35 kB)
+#20 6.127 Using cached boto3-1.43.119-py3-none-any.whl (140 kB)
+#20 6.128 Using cached python_multipart-0.0.32-py3-none-any.whl (30 kB)
+#20 6.133 Downloading pytest-8.4.2-py3-none-any.whl (365 kB)
+#20 6.142    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 365.8/365.8 kB 48.6 MB/s eta 0:00:00
+#20 6.146 Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+#20 6.150    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 73.5/73.5 kB 28.4 MB/s eta 0:00:00
+#20 6.154 Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
+#20 6.157    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 78.8/78.8 kB 36.0 MB/s eta 0:00:00
+#20 6.158 Using cached psycopg_binary-3.3.6-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.3 MB)
+#20 6.168 Using cached annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)
+#20 6.169 Using cached botocore-1.43.119-py3-none-any.whl (16.2 MB)
+#20 6.194 Using cached click-8.5.0-py3-none-any.whl (125 kB)
+#20 6.196 Using cached dnspython-2.9.0-py3-none-any.whl (354 kB)
+#20 6.197 Using cached h11-0.16.0-py3-none-any.whl (37 kB)
+#20 6.198 Using cached httptools-0.9.0-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (499 kB)
+#20 6.200 Using cached idna-3.20-py3-none-any.whl (69 kB)
+#20 6.206 Downloading iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
+#20 6.209 Using cached jmespath-1.1.0-py3-none-any.whl (20 kB)
+#20 6.210 Using cached opentelemetry_api-1.45.1-py3-none-any.whl (60 kB)
+#20 6.213 Downloading packaging-26.3-py3-none-any.whl (129 kB)
+#20 6.217    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 130.0/130.0 kB 55.3 MB/s eta 0:00:00
+#20 6.221 Downloading pluggy-1.7.0-py3-none-any.whl (27 kB)
+#20 6.223 Using cached pydantic-2.14.1-py3-none-any.whl (488 kB)
+#20 6.225 Using cached pydantic_core-2.50.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.2 MB)
+#20 6.232 Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+#20 6.246    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 105.2 MB/s eta 0:00:00
+#20 6.247 Using cached python_dotenv-1.2.4-py3-none-any.whl (23 kB)
+#20 6.248 Using cached pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (806 kB)
+#20 6.251 Using cached s3transfer-0.19.3-py3-none-any.whl (90 kB)
+#20 6.252 Using cached starlette-1.10.0-py3-none-any.whl (80 kB)
+#20 6.253 Using cached anyio-4.15.1-py3-none-any.whl (132 kB)
+#20 6.255 Using cached typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+#20 6.256 Using cached typing_inspection-0.4.4-py3-none-any.whl (14 kB)
+#20 6.257 Using cached uvloop-0.23.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (4.0 MB)
+#20 6.265 Using cached watchfiles-1.3.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (458 kB)
+#20 6.266 Using cached websockets-17.3-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (225 kB)
+#20 6.270 Downloading certifi-2026.10.23-py3-none-any.whl (135 kB)
+#20 6.274    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 135.1/135.1 kB 56.4 MB/s eta 0:00:00
+#20 6.276 Using cached mako-1.4.3-py3-none-any.whl (80 kB)
+#20 6.277 Using cached annotated_types-0.8.0-py3-none-any.whl (13 kB)
+#20 6.278 Using cached markupsafe-3.0.4-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+#20 6.279 Using cached python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+#20 6.281 Using cached urllib3-2.8.0-py3-none-any.whl (135 kB)
+#20 6.282 Using cached six-1.17.0-py2.py3-none-any.whl (11 kB)
+#20 6.594 Installing collected packages: websockets, uvloop, urllib3, typing-extensions, six, pyyaml, python-multipart, python-dotenv, PyJWT, pygments, psycopg-binary, pluggy, packaging, MarkupSafe, jmespath, iniconfig, idna, httptools, h11, dnspython, click, certifi, bcrypt, annotated-types, annotated-doc, uvicorn, typing-inspection, sqlalchemy, python-dateutil, pytest, pydantic-core, psycopg, opentelemetry-api, Mako, httpcore, email-validator, anyio, watchfiles, starlette, pydantic, httpx, botocore, alembic, s3transfer, pydantic-settings, fastapi, boto3
+#20 8.047 Successfully installed Mako-1.4.3 MarkupSafe-3.0.4 PyJWT-2.15.1 alembic-1.20.1 annotated-doc-0.0.5 annotated-types-0.8.0 anyio-4.15.1 bcrypt-4.3.0 boto3-1.43.119 botocore-1.43.119 certifi-2026.10.23 click-8.5.0 dnspython-2.9.0 email-validator-2.3.0 fastapi-0.162.0 h11-0.16.0 httpcore-1.0.9 httptools-0.9.0 httpx-0.28.1 idna-3.20 iniconfig-2.3.1 jmespath-1.1.0 opentelemetry-api-1.45.1 packaging-26.3 pluggy-1.7.0 psycopg-3.3.6 psycopg-binary-3.3.6 pydantic-2.14.1 pydantic-core-2.50.1 pydantic-settings-2.16.1 pygments-2.21.0 pytest-8.4.2 python-dateutil-2.9.0.post0 python-dotenv-1.2.4 python-multipart-0.0.32 pyyaml-6.0.3 s3transfer-0.19.3 six-1.17.0 sqlalchemy-2.1.6 starlette-1.10.0 typing-extensions-4.16.0 typing-inspection-0.4.4 urllib3-2.8.0 uvicorn-0.54.0 uvloop-0.23.0 watchfiles-1.3.0 websockets-17.3
+#20 8.051 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+#20 DONE 8.8s
+
+#21 [test 1/2] COPY --from=test-deps /test-deps /deps
+#21 DONE 0.9s
+
+#22 [test 2/2] COPY --chown=1000:1000 tests /app/tests
+#22 DONE 0.1s
+
+#23 exporting to image
+#23 exporting layers
+#23 exporting layers 3.6s done
+#23 exporting manifest sha256:2f7a7b2da8dd95ce14bf105de3bccd640df6435878525f1abda188a85e3134eb done
+#23 exporting config sha256:dba7d75702800dc66482385e17231654982472a25d1cef7e4346dc4b3c07f6fc done
+#23 exporting attestation manifest sha256:b24f32e336acbd5f0b9bdedb25ffb3727de1204e84ef9b066972c8f3a72351a0 done
+#23 exporting manifest list sha256:7db1d9ecbd0fc0311f5b15ef8f4ec5a1e98335d45778be240bc7ddcb7952911e done
+#23 naming to docker.io/library/hackhaton-db-ci-test:latest done
+#23 unpacking to docker.io/library/hackhaton-db-ci-test:latest
+#23 unpacking to docker.io/library/hackhaton-db-ci-test:latest 0.9s done
+#23 DONE 4.6s
+
+#24 resolving provenance for metadata file
+#24 DONE 0.0s
+........................................................................ [ 74%]
+.........................                                                [100%]
+=============================== warnings summary ===============================
+../deps/fastapi/testclient.py:1
+  /deps/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_database.py::test_schema_and_seed_roles_match_migrations
+  /deps/alembic/config.py:604: DeprecationWarning: No path_separator found in configuration; falling back to legacy splitting on spaces, commas, and colons for prepend_sys_path.  Consider adding path_separator=os to Alembic config.
+    util.warn_deprecated(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+97 passed, 2 warnings in 102.24s (0:01:42)

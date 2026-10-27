@@ -13,6 +13,10 @@
 [PDF](docs/mini-report-backend.pdf). Подтверждающие скриншоты находятся в
 [docs/figures](docs/figures).
 
+База данных: [схема, ER-диаграммы, миграции и запуск PostgreSQL в Docker](docs/DATABASE.md).
+Проверка БД и полного проекта в Docker Compose: [.github/workflows/database.yml](.github/workflows/database.yml).
+Мини-отчёт по базе данных: [PDF](docs/mini-report-database.pdf).
+
 ## Стек
 
 - Python 3.11 + FastAPI — типизированный API и Swagger/OpenAPI.
