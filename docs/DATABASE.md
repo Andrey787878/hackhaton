@@ -262,6 +262,9 @@ docker compose cp db:/tmp/hackhaton.dump ./hackhaton.dump
 
 ## Ссылки
 
+- [Мини-отчёт по базе данных](mini-report-database.pdf)
+- [Успешная Docker-проверка: 97 тестов, миграции и перезапуск БД](https://github.com/Andrey787878/hackhaton/actions/runs/40545681206)
+- [Сохранённые результаты этой проверки](database/evidence)
 - [ORM-модели в dev](https://github.com/Andrey787878/hackhaton/blob/dev/app/models.py)
 - [Конфигурация PostgreSQL](https://github.com/Andrey787878/hackhaton/blob/dev/app/config.py)
 - [Подключение и сессии](https://github.com/Andrey787878/hackhaton/blob/dev/app/db.py)

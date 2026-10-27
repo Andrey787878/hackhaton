@@ -15,6 +15,7 @@
 
 База данных: [схема, ER-диаграммы, миграции и запуск PostgreSQL в Docker](docs/DATABASE.md).
 Проверка БД и полного проекта в Docker Compose: [.github/workflows/database.yml](.github/workflows/database.yml).
+Мини-отчёт по базе данных: [PDF](docs/mini-report-database.pdf).
 
 ## Стек
 
