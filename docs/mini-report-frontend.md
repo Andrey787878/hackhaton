@@ -2,6 +2,7 @@
 
 Платформа онлайн-хакатонов и соревнований. Команда № 3, группа ПИ41Б.
 Оформленные версии отчёта: [DOCX](mini-report-frontend.docx), [PDF](mini-report-frontend.pdf).
+Презентация для защиты: [PDF](presentation-frontend.pdf), [PPTX с заметками](presentation-frontend.pptx).
 
 ## 1. Ссылка на GitHub
 

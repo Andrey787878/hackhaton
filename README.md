@@ -20,6 +20,8 @@
 Веб-интерфейс (React + TypeScript + Vite): [страницы, запуск и структура](docs/FRONTEND.md).
 Мини-отчёт по клиентской части: [DOCX](docs/mini-report-frontend.docx),
 [PDF](docs/mini-report-frontend.pdf), [Markdown](docs/mini-report-frontend.md).
+Презентация для защиты: [PDF](docs/presentation-frontend.pdf),
+[PPTX с заметками докладчика](docs/presentation-frontend.pptx).
 
 ## Стек
 
