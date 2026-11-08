@@ -180,3 +180,10 @@ class ScoringService:
         for position, entry in enumerate(entries, 1):
             entry["rank"] = position if position == 1 or entry["total"] != entries[position - 2]["total"] else entries[position - 2]["rank"]
         return dict(hackathon_id=hid, case_id=cid, entries=entries)
+
+    def results(self, hid: int):
+        """Рейтинги всех кейсов хакатона: после дедлайна публичный список кейсов закрыт."""
+        self.ensure_finished(self.event(hid))
+        cases = self.db.scalars(select(Case).where(Case.hackathon_id == hid).order_by(Case.id))
+        return dict(hackathon_id=hid,
+                    cases=[dict(title=case.title, **self.leaderboard(hid, case.id)) for case in cases])

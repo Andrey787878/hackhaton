@@ -212,6 +212,24 @@ def test_empty_and_draft_leaderboard(client, user, scenario, clock_state):
     assert client.get("/api/v1/hackathons/999999/cases/1/leaderboard").status_code == 404
 
 
+def test_hackathon_leaderboard_lists_every_case(client, user, scenario, clock_state):
+    hid, cid, ids, _ = scenario
+    tid, _, _ = make_submission(client, user, scenario)
+    expert_id, expert = user("expert")
+    assert client.get(f"/api/v1/hackathons/{hid}/leaderboard").status_code == 409
+    clock_state["now"] = END
+    aid = assign(client, scenario, tid, expert_id).json()["id"]
+    assert score(client, aid, expert, [{"criterion_id": ids[0], "value": 8},
+                                      {"criterion_id": ids[1], "value": 5}]).status_code == 200
+    result = client.get(f"/api/v1/hackathons/{hid}/leaderboard")
+    assert result.status_code == 200, result.text
+    [case] = result.json()["cases"]
+    assert case["case_id"] == cid and case["title"] == "Кейс"
+    assert case["entries"] == board(client, scenario).json()["entries"]
+    assert case["entries"][0]["total"] == "85.00"
+    assert client.get("/api/v1/hackathons/999999/leaderboard").status_code == 404
+
+
 def test_assignment_is_persisted_once(client, user, scenario, clock_state):
     tid, _, sid = make_submission(client, user, scenario)
     expert_id, _ = user("expert")

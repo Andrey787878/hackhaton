@@ -56,3 +56,12 @@ class LeaderboardRead(BaseModel):
     hackathon_id: int
     case_id: int
     entries: list[LeaderboardEntry]
+
+
+class CaseLeaderboardRead(LeaderboardRead):
+    title: str
+
+
+class HackathonLeaderboardRead(BaseModel):
+    hackathon_id: int
+    cases: list[CaseLeaderboardRead]

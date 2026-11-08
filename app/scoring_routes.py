@@ -5,7 +5,8 @@ from sqlalchemy.orm import Session
 from app.db import get_db
 from app.dependencies import CurrentUserContext, get_current_user_context, require_permission
 from app.rbac_permissions import PermissionSlugs
-from app.scoring_schemas import AssignmentRead, AssignmentWrite, LeaderboardRead, ScoresWrite
+from app.scoring_schemas import (AssignmentRead, AssignmentWrite, HackathonLeaderboardRead,
+                                 LeaderboardRead, ScoresWrite)
 from app.scoring_service import ScoringError, ScoringService
 from app.team_service import get_clock
 
@@ -68,3 +69,9 @@ def score(assignment_id: int, data: ScoresWrite,
 @router.get("/hackathons/{hackathon_id}/cases/{case_id}/leaderboard", response_model=LeaderboardRead)
 def leaderboard(hackathon_id: int, case_id: int, svc=Depends(service)):
     return call(svc, lambda: svc.leaderboard(hackathon_id, case_id))
+
+
+@router.get("/hackathons/{hackathon_id}/leaderboard", response_model=HackathonLeaderboardRead)
+def hackathon_leaderboard(hackathon_id: int, svc=Depends(service)):
+    """Публичные итоги всех кейсов хакатона после дедлайна (для наблюдателя и фронтенда)."""
+    return call(svc, lambda: svc.results(hackathon_id))
