@@ -17,6 +17,10 @@
 Проверка БД и полного проекта в Docker Compose: [.github/workflows/database.yml](.github/workflows/database.yml).
 Мини-отчёт по базе данных: [PDF](docs/mini-report-database.pdf).
 
+Веб-интерфейс (React + TypeScript + Vite): [страницы, запуск и структура](docs/FRONTEND.md).
+Мини-отчёт по клиентской части: [DOCX](docs/mini-report-frontend.docx),
+[PDF](docs/mini-report-frontend.pdf), [Markdown](docs/mini-report-frontend.md).
+
 ## Стек
 
 - Python 3.11 + FastAPI — типизированный API и Swagger/OpenAPI.
@@ -27,6 +31,7 @@
 - Docker Compose — воспроизводимый запуск API, БД, MinIO и миграций.
 - Pytest + HTTPX — интеграционные тесты с PostgreSQL.
 - MinIO/S3 — приватное хранение архивов отдельно от PostgreSQL.
+- React 18 + TypeScript + Vite — веб-интерфейс; nginx раздаёт сборку и проксирует `/api`.
 
 ## Запуск
 
@@ -44,6 +49,7 @@ docker compose up --build -d --wait
 Данные PostgreSQL сохраняются в томе `pgdata`, порт БД наружу не публикуется.
 При занятом порте 8080 измените `APP_PORT` в `.env`.
 
+- Веб-интерфейс: http://localhost:3000 (порт — `WEB_PORT` в `.env`)
 - Swagger: http://localhost:8080/docs
 - OpenAPI: http://localhost:8080/openapi.json
 - Проверка API и БД: http://localhost:8080/api/v1/health
@@ -153,6 +159,8 @@ Dockerfile              # образы приложения и тестов
 Dockerfile.minio        # сборка MinIO из официального исходного кода
 docker-compose.yml      # PostgreSQL, MinIO, миграции, API
 compose.test.yml        # изолированный тестовый сервис и хранилище
+frontend/               # веб-интерфейс: React, TypeScript, Vite, nginx (docs/FRONTEND.md)
+scripts/seed_ui_demo.py # демоданные для показа интерфейса
 ```
 
 Поток запроса: маршрут → проверка данных/доступа → сервис → ORM → PostgreSQL.
