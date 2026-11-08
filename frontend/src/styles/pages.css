@@ -714,6 +714,18 @@
   background: var(--red-soft);
   color: var(--red-3);
 }
+@media (max-width: 560px) {
+  .notification {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .notification > .grow {
+    flex-basis: calc(100% - 52px);
+  }
+  .notification > .btn {
+    margin-left: 52px;
+  }
+}
 
 /* ---------- профиль ---------- */
 .profile-head {

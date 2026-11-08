@@ -16,15 +16,21 @@ export function useAsync<T>(loader: () => Promise<T>, deps: DependencyList): Asy
   const [error, setError] = useState<ApiError | Error | null>(null);
   const [loading, setLoading] = useState(true);
   const generation = useRef(0);
+  const hasData = useRef(false);
   const loaderRef = useRef(loader);
   loaderRef.current = loader;
 
   const run = useCallback(async () => {
     const current = ++generation.current;
     setLoading(true);
+    // Повтор после ошибки, когда показывать ещё нечего: убираем старую ошибку,
+    // чтобы на экране не было одновременно «ошибки» и «загрузки». При фоновом
+    // опросе с уже показанными данными ошибку оставляем — без мигания.
+    if (!hasData.current) setError(null);
     try {
       const result = await loaderRef.current();
       if (current === generation.current) {
+        hasData.current = true;
         setDataState(result);
         setError(null);
       }
@@ -36,6 +42,7 @@ export function useAsync<T>(loader: () => Promise<T>, deps: DependencyList): Asy
   }, []);
 
   useEffect(() => {
+    hasData.current = false;
     setDataState(undefined);
     void run();
     return () => {
@@ -45,6 +52,7 @@ export function useAsync<T>(loader: () => Promise<T>, deps: DependencyList): Asy
   }, deps);
 
   const setData = useCallback((value: T | ((prev: T | undefined) => T)) => {
+    hasData.current = true;
     setDataState((prev) => (typeof value === "function" ? (value as (p: T | undefined) => T)(prev) : value));
   }, []);
 
