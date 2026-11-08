@@ -74,6 +74,15 @@ services:
       timeout: 4s
       retries: 12
 
+  web:
+    build:
+      context: ./frontend
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - '127.0.0.1:${WEB_PORT:-3000}:80'
+
 volumes:
   pgdata:
   miniodata:
