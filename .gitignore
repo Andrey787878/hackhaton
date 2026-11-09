@@ -216,3 +216,11 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Local demo credentials and private working files
+.local/
+
+# Frontend (Node.js)
+node_modules/
+frontend/dist/
+*.tsbuildinfo

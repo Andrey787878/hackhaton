@@ -1,0 +1,151 @@
+{
+  "counts": {
+    "auth_sessions": 155,
+    "cases": 55,
+    "criteria": 65,
+    "expert_assignments": 11,
+    "hackathons": 61,
+    "invites": 11,
+    "notifications": 86,
+    "permission_role": 34,
+    "permissions": 26,
+    "role_user": 159,
+    "roles": 6,
+    "scores": 14,
+    "stored_objects": 4,
+    "submissions": 16,
+    "team_members": 43,
+    "teams": 36,
+    "users": 158
+  },
+  "examples": {
+    "roles": [
+      {
+        "id": 1,
+        "slug": "admin"
+      },
+      {
+        "id": 2,
+        "slug": "user"
+      },
+      {
+        "id": 3,
+        "slug": "guest"
+      },
+      {
+        "id": 4,
+        "slug": "organizer"
+      },
+      {
+        "id": 5,
+        "slug": "participant"
+      },
+      {
+        "id": 6,
+        "slug": "expert"
+      }
+    ],
+    "hackathons": [
+      {
+        "id": 11,
+        "title": "Изменено",
+        "is_published": false
+      },
+      {
+        "id": 12,
+        "title": "Хакатон",
+        "is_published": true
+      },
+      {
+        "id": 13,
+        "title": "Хакатон",
+        "is_published": true
+      },
+      {
+        "id": 14,
+        "title": "Хакатон",
+        "is_published": true
+      },
+      {
+        "id": 15,
+        "title": "Хакатон",
+        "is_published": true
+      },
+      {
+        "id": 16,
+        "title": "Хакатон",
+        "is_published": true
+      }
+    ],
+    "teams": [
+      {
+        "id": 8,
+        "hackathon_id": 35,
+        "name": "Команда"
+      },
+      {
+        "id": 9,
+        "hackathon_id": 36,
+        "name": "Alpha"
+      },
+      {
+        "id": 10,
+        "hackathon_id": 37,
+        "name": "Alpha"
+      },
+      {
+        "id": 11,
+        "hackathon_id": 38,
+        "name": "Alpha"
+      },
+      {
+        "id": 12,
+        "hackathon_id": 39,
+        "name": "Alpha"
+      },
+      {
+        "id": 13,
+        "hackathon_id": 40,
+        "name": "Alpha"
+      }
+    ],
+    "scores": [
+      {
+        "id": 2,
+        "assignment_id": 1,
+        "criterion_id": 22,
+        "value": 8
+      },
+      {
+        "id": 3,
+        "assignment_id": 1,
+        "criterion_id": 23,
+        "value": 5
+      },
+      {
+        "id": 5,
+        "assignment_id": 4,
+        "criterion_id": 29,
+        "value": 8
+      },
+      {
+        "id": 6,
+        "assignment_id": 4,
+        "criterion_id": 30,
+        "value": 5
+      },
+      {
+        "id": 7,
+        "assignment_id": 5,
+        "criterion_id": 31,
+        "value": 10
+      },
+      {
+        "id": 8,
+        "assignment_id": 5,
+        "criterion_id": 32,
+        "value": 5
+      }
+    ]
+  }
+}

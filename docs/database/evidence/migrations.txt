@@ -1,0 +1,11 @@
+migrate-1  | INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+migrate-1  | INFO  [alembic.runtime.migration] Will assume transactional DDL.
+migrate-1  | INFO  [alembic.runtime.migration] Running upgrade  -> 20260409_0000, Create auth tables.
+migrate-1  | INFO  [alembic.runtime.migration] Running upgrade 20260409_0000 -> 20260409_0001, Create RBAC tables.
+migrate-1  | INFO  [alembic.runtime.migration] Running upgrade 20260409_0001 -> 20260409_0002, Seed RBAC base data.
+migrate-1  | INFO  [alembic.runtime.migration] Running upgrade 20260409_0002 -> 20260927_0003, Platform profile and roles.
+migrate-1  | INFO  [alembic.runtime.migration] Running upgrade 20260927_0003 -> 20260927_0004, Hackathons, cases and evaluation criteria.
+migrate-1  | INFO  [alembic.runtime.migration] Running upgrade 20260927_0004 -> 20260927_0005, Teams, membership and revocable invitations.
+migrate-1  | INFO  [alembic.runtime.migration] Running upgrade 20260927_0005 -> 20260928_0006, Submission metadata and S3 object references.
+migrate-1  | INFO  [alembic.runtime.migration] Running upgrade 20260928_0006 -> 20260928_0007, Expert assignments and criterion scores.
+migrate-1  | INFO  [alembic.runtime.migration] Running upgrade 20260928_0007 -> 20260928_0008, In-transaction notification journal.

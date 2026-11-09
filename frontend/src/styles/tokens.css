@@ -1,0 +1,56 @@
+/* Дизайн-токены: оттенки чёрного, синего и красного. */
+:root {
+  color-scheme: dark;
+
+  /* чёрный */
+  --bg: #05060a;
+  --bg-2: #090b11;
+  --surface: #0e1118;
+  --surface-2: #131722;
+  --surface-3: #1a1f2d;
+  --border: #20263a;
+  --border-strong: #2d3550;
+
+  /* текст */
+  --text: #e8ecf5;
+  --text-2: #b3bbcc;
+  --muted: #7a849a;
+
+  /* синий — основное действие, активная фаза, успех */
+  --blue: #2f6bff;
+  --blue-2: #5b8cff;
+  --blue-3: #a8c0ff;
+  --blue-deep: #0c1a44;
+  --blue-soft: rgba(47, 107, 255, 0.14);
+  --blue-line: rgba(91, 140, 255, 0.35);
+
+  /* красный — дедлайн, ошибки, опасные действия, итоги */
+  --red: #e5383b;
+  --red-2: #ff5c60;
+  --red-3: #ffb3b5;
+  --red-deep: #3a0b0e;
+  --red-soft: rgba(229, 56, 59, 0.14);
+  --red-line: rgba(255, 92, 96, 0.35);
+
+  --gradient: linear-gradient(120deg, var(--blue) 0%, #3f4fd8 45%, var(--red) 100%);
+  --gradient-soft: linear-gradient(120deg, rgba(47, 107, 255, 0.18), rgba(229, 56, 59, 0.14));
+
+  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-lg: 20px;
+  --shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 12px 32px -16px rgba(0, 0, 0, 0.8);
+  --ring: 0 0 0 3px rgba(47, 107, 255, 0.35);
+
+  --font: "Inter Variable", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+
+  --content: 1200px;
+  --gutter: 24px;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --gutter: 16px;
+    --radius: 12px;
+  }
+}
