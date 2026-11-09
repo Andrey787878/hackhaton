@@ -1,0 +1,24 @@
+{
+  "server_version": "17.11 (Debian 17.11-1.pgdg13+2)",
+  "database": "hackhaton",
+  "revision": [
+    "20260928_0008"
+  ],
+  "application_tables": 17,
+  "foreign_keys": 32,
+  "check_constraints": 7,
+  "roles": [
+    "admin",
+    "expert",
+    "guest",
+    "organizer",
+    "participant",
+    "user"
+  ],
+  "schema_matches_models": true,
+  "persistence": {
+    "commit_and_read": "passed",
+    "rollback": "passed",
+    "cleanup": "passed"
+  }
+}
