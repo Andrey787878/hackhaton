@@ -11,7 +11,17 @@ from pydantic import HttpUrl, TypeAdapter, ValidationError
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models import Case, ExpertAssignment, Hackathon, Role, StoredObject, Submission, Team, TeamMember, UserRole
+from app.models import (
+    Case,
+    ExpertAssignment,
+    Hackathon,
+    Role,
+    StoredObject,
+    Submission,
+    Team,
+    TeamMember,
+    UserRole,
+)
 from app.notification_service import record
 
 MAX_ARCHIVE_BYTES = 20 * 1024 * 1024
@@ -35,14 +45,24 @@ class SubmissionService:
         return team
 
     def access(self, team: Team, uid: int) -> None:
-        member = self.db.scalar(select(TeamMember.id).where(TeamMember.team_id == team.id,
-                                                             TeamMember.user_id == uid))
+        member = self.db.scalar(
+            select(TeamMember.id).where(TeamMember.team_id == team.id, TeamMember.user_id == uid)
+        )
         if member is not None:
             return
-        owner = self.db.scalar(select(Hackathon.organizer_id).where(Hackathon.id == team.hackathon_id))
-        role = self.db.scalar(select(UserRole.id).join(Role, Role.id == UserRole.role_id).where(
-            UserRole.user_id == uid, Role.slug.in_(("organizer", "admin")),
-            Role.deleted_at.is_(None), UserRole.deleted_at.is_(None)))
+        owner = self.db.scalar(
+            select(Hackathon.organizer_id).where(Hackathon.id == team.hackathon_id)
+        )
+        role = self.db.scalar(
+            select(UserRole.id)
+            .join(Role, Role.id == UserRole.role_id)
+            .where(
+                UserRole.user_id == uid,
+                Role.slug.in_(("organizer", "admin")),
+                Role.deleted_at.is_(None),
+                UserRole.deleted_at.is_(None),
+            )
+        )
         if owner == uid and role is not None:
             return
         raise SubmissionError(403, "Решения доступны только команде и организатору хакатона.")
@@ -62,7 +82,10 @@ class SubmissionService:
             raise SubmissionError(409, "Приём решений ещё не начался.")
         if self.clock() >= hackathon.deadline_at:
             raise SubmissionError(409, "Дедлайн сдачи прошёл.")
-        if self.db.scalar(select(Case.id).where(Case.id == case_id, Case.hackathon_id == hid)) is None:
+        if (
+            self.db.scalar(select(Case.id).where(Case.id == case_id, Case.hackathon_id == hid))
+            is None
+        ):
             raise SubmissionError(404, "Кейс этого хакатона не найден.")
         return team
 
@@ -119,12 +142,27 @@ class SubmissionService:
     @staticmethod
     def result(submission: Submission):
         stored = submission.stored_object
-        return dict(id=submission.id, team_id=submission.team_id, case_id=submission.case_id,
-                    submitted_by=submission.submitted_by, submitted_at=submission.submitted_at,
-                    url=submission.url, archive=None if stored is None else
-                    dict(filename=stored.original_name, size_bytes=stored.size_bytes, sha256=stored.sha256))
+        return dict(
+            id=submission.id,
+            team_id=submission.team_id,
+            case_id=submission.case_id,
+            submitted_by=submission.submitted_by,
+            submitted_at=submission.submitted_at,
+            url=submission.url,
+            archive=(
+                None
+                if stored is None
+                else dict(
+                    filename=stored.original_name,
+                    size_bytes=stored.size_bytes,
+                    sha256=stored.sha256,
+                )
+            ),
+        )
 
-    def create(self, tid: int, case_id: int, uid: int, raw_url: str | None, file: UploadFile | None):
+    def create(
+        self, tid: int, case_id: int, uid: int, raw_url: str | None, file: UploadFile | None
+    ):
         url = self.validate_url(raw_url)
         if url is None and file is None:
             raise SubmissionError(422, "Укажите URL и/или архив.")
@@ -150,17 +188,34 @@ class SubmissionService:
                 raise SubmissionError(409, "Дедлайн сдачи прошёл.")
             stored = None
             if metadata is not None:
-                stored = StoredObject(object_key=key, original_name=name, content_type=content_type,
-                                      size_bytes=size, sha256=digest)
+                stored = StoredObject(
+                    object_key=key,
+                    original_name=name,
+                    content_type=content_type,
+                    size_bytes=size,
+                    sha256=digest,
+                )
                 self.db.add(stored)
                 self.db.flush()
-            submission = Submission(team_id=tid, case_id=case_id, submitted_by=uid,
-                                    submitted_at=now, url=url, stored_object_id=stored.id if stored else None)
+            submission = Submission(
+                team_id=tid,
+                case_id=case_id,
+                submitted_by=uid,
+                submitted_at=now,
+                url=url,
+                stored_object_id=stored.id if stored else None,
+            )
             self.db.add(submission)
             self.db.flush()
-            record(self.db, user_id=hackathon.organizer_id, actor_id=uid,
-                   kind="submission_created", resource_type="submission",
-                   resource_id=submission.id, at=now)
+            record(
+                self.db,
+                user_id=hackathon.organizer_id,
+                actor_id=uid,
+                kind="submission_created",
+                resource_type="submission",
+                resource_id=submission.id,
+                at=now,
+            )
             self.db.commit()
             return self.result(submission)
         except Exception:
@@ -178,8 +233,14 @@ class SubmissionService:
         query = select(Submission).where(Submission.team_id == tid)
         if case_id is not None:
             query = query.where(Submission.case_id == case_id)
-        return [self.result(item) for item in self.db.scalars(
-            query.order_by(Submission.submitted_at.desc(), Submission.id.desc()).limit(limit).offset(offset))]
+        return [
+            self.result(item)
+            for item in self.db.scalars(
+                query.order_by(Submission.submitted_at.desc(), Submission.id.desc())
+                .limit(limit)
+                .offset(offset)
+            )
+        ]
 
     def get(self, submission_id: int, uid: int):
         item = self.db.get(Submission, submission_id)
@@ -188,12 +249,22 @@ class SubmissionService:
         try:
             self.access(self.team(item.team_id), uid)
         except SubmissionError as exc:
-            if exc.status != 403 or self.db.scalar(select(ExpertAssignment.id)
+            if (
+                exc.status != 403
+                or self.db.scalar(
+                    select(ExpertAssignment.id)
                     .join(UserRole, UserRole.user_id == ExpertAssignment.expert_id)
                     .join(Role, Role.id == UserRole.role_id)
-                    .where(ExpertAssignment.submission_id == submission_id,
-                           ExpertAssignment.expert_id == uid, Role.slug == "expert",
-                           Role.deleted_at.is_(None), UserRole.deleted_at.is_(None))) is None:
+                    .where(
+                        ExpertAssignment.submission_id == submission_id,
+                        ExpertAssignment.expert_id == uid,
+                        Role.slug == "expert",
+                        Role.deleted_at.is_(None),
+                        UserRole.deleted_at.is_(None),
+                    )
+                )
+                is None
+            ):
                 raise
         return item
 

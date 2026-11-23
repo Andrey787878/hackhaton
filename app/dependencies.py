@@ -68,7 +68,8 @@ def validate_register_request_unique(
 
     try:
         username_exists = (
-            db.scalar(select(User.id).where(func.lower(User.username) == username.lower())) is not None
+            db.scalar(select(User.id).where(func.lower(User.username) == username.lower()))
+            is not None
         )
         if username_exists:
             errors.append(

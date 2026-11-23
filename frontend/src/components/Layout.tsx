@@ -1,15 +1,15 @@
-import { useCallback, useEffect, useState } from "react";
-import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { publicApi } from "../api/hackathons";
-import { notificationsApi } from "../api/notifications";
-import { useAuth } from "../auth/AuthContext";
-import { useInterval } from "../hooks/useInterval";
-import { useServerNow } from "../hooks/useServerNow";
-import { initials } from "../utils/format";
-import { displayName, hasRole } from "../utils/roles";
-import { Icon } from "./Icon";
+import { useCallback, useEffect, useState } from 'react';
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { publicApi } from '../api/hackathons';
+import { notificationsApi } from '../api/notifications';
+import { useAuth } from '../auth/AuthContext';
+import { useInterval } from '../hooks/useInterval';
+import { useServerNow } from '../hooks/useServerNow';
+import { initials } from '../utils/format';
+import { displayName, hasRole } from '../utils/roles';
+import { Icon } from './Icon';
 
-export const NOTIFICATIONS_CHANGED = "hackpulse:notifications-changed";
+export const NOTIFICATIONS_CHANGED = 'hackpulse:notifications-changed';
 
 function useUnreadCount(enabled: boolean) {
   const [count, setCount] = useState(0);
@@ -38,7 +38,7 @@ function ApiStatus() {
   const check = useCallback(() => {
     publicApi
       .health()
-      .then((data) => setOk(data.status === "ok" && data.database === "ok"))
+      .then((data) => setOk(data.status === 'ok' && data.database === 'ok'))
       .catch(() => setOk(false));
   }, []);
   useEffect(check, [check]);
@@ -46,8 +46,8 @@ function ApiStatus() {
   const now = useServerNow();
   return (
     <div className="api-status">
-      <span className={`status-dot ${ok === null ? "" : ok ? "ok" : "down"}`} aria-hidden />
-      {ok === null ? "Проверяем API…" : ok ? "API и база данных доступны" : "API недоступен"}
+      <span className={`status-dot ${ok === null ? '' : ok ? 'ok' : 'down'}`} aria-hidden />
+      {ok === null ? 'Проверяем API…' : ok ? 'API и база данных доступны' : 'API недоступен'}
       <span className="sep">·</span>
       <span className="mono">{new Date(now).toISOString().slice(11, 19)} UTC</span>
     </div>
@@ -65,7 +65,7 @@ export function Layout() {
 
   const onLogout = async () => {
     await logout();
-    navigate("/");
+    navigate('/');
   };
 
   return (
@@ -88,24 +88,24 @@ export function Layout() {
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((open) => !open)}
           >
-            <Icon name={menuOpen ? "x" : "menu"} />
+            <Icon name={menuOpen ? 'x' : 'menu'} />
           </button>
 
-          <nav className={menuOpen ? "nav open" : "nav"} aria-label="Основная навигация">
+          <nav className={menuOpen ? 'nav open' : 'nav'} aria-label="Основная навигация">
             <NavLink to="/" end>
               <Icon name="layers" size={16} /> Хакатоны
             </NavLink>
-            {hasRole(user, "participant") && (
+            {hasRole(user, 'participant') && (
               <NavLink to="/teams">
                 <Icon name="users" size={16} /> Мои команды
               </NavLink>
             )}
-            {hasRole(user, "expert") && (
+            {hasRole(user, 'expert') && (
               <NavLink to="/expert">
                 <Icon name="star" size={16} /> Экспертиза
               </NavLink>
             )}
-            {hasRole(user, "organizer") && (
+            {hasRole(user, 'organizer') && (
               <NavLink to="/organizer">
                 <Icon name="shield" size={16} /> Организатор
               </NavLink>
@@ -115,10 +115,14 @@ export function Layout() {
 
             {user ? (
               <>
-                <NavLink to="/notifications" className="nav-bell" aria-label={`Уведомления: ${unread} новых`}>
+                <NavLink
+                  to="/notifications"
+                  className="nav-bell"
+                  aria-label={`Уведомления: ${unread} новых`}
+                >
                   <Icon name="bell" size={16} />
                   <span className="hide-desktop">Уведомления</span>
-                  {unread > 0 && <span className="counter">{unread > 99 ? "99+" : unread}</span>}
+                  {unread > 0 && <span className="counter">{unread > 99 ? '99+' : unread}</span>}
                 </NavLink>
                 <NavLink to="/profile" className="nav-user">
                   <span className="avatar">{initials(displayName(user))}</span>

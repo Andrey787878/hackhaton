@@ -16,7 +16,6 @@ from app.dto import (
     RoleWriteDTO,
 )
 
-
 USERNAME_REGEX = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{2,63}$")
 BIRTHDAY_FORMAT_REGEX = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 SLUG_REGEX = re.compile(r"^[A-Za-z0-9_-]+$")

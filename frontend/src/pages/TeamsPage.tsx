@@ -1,17 +1,17 @@
-import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { messageOf } from "../api/errors";
-import { publicApi } from "../api/hackathons";
-import { teamsApi } from "../api/teams";
-import type { HackathonStatus } from "../api/types";
-import { useAuth } from "../auth/AuthContext";
-import { PhaseBadge } from "../components/Badges";
-import { Countdown, phaseAt } from "../components/Countdown";
-import { Alert, EmptyState, ErrorBox, Loader } from "../components/Feedback";
-import { Icon } from "../components/Icon";
-import { useAsync } from "../hooks/useAsync";
-import { useServerNow } from "../hooks/useServerNow";
-import { plural } from "../utils/format";
+import { useState, type FormEvent } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { messageOf } from '../api/errors';
+import { publicApi } from '../api/hackathons';
+import { teamsApi } from '../api/teams';
+import type { HackathonStatus } from '../api/types';
+import { useAuth } from '../auth/AuthContext';
+import { PhaseBadge } from '../components/Badges';
+import { Countdown, phaseAt } from '../components/Countdown';
+import { Alert, EmptyState, ErrorBox, Loader } from '../components/Feedback';
+import { Icon } from '../components/Icon';
+import { useAsync } from '../hooks/useAsync';
+import { useServerNow } from '../hooks/useServerNow';
+import { plural } from '../utils/format';
 
 const CODE = /^[A-Za-z0-9_-]{43}$/;
 
@@ -27,7 +27,7 @@ export function TeamsPage() {
     statuses.forEach((status) => status && byId.set(status.hackathon.id, status));
     return { list, byId };
   }, []);
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,7 +35,7 @@ export function TeamsPage() {
     event.preventDefault();
     const value = code.trim();
     if (!CODE.test(value)) {
-      setError("Код приглашения — 43 символа: латиница, цифры, «-» и «_».");
+      setError('Код приглашения — 43 символа: латиница, цифры, «-» и «_».');
       return;
     }
     setBusy(true);
@@ -76,30 +76,39 @@ export function TeamsPage() {
                   </Link>
                 }
               >
-                Создайте команду на странице хакатона или вступите в существующую по invite-коду капитана.
+                Создайте команду на странице хакатона или вступите в существующую по invite-коду
+                капитана.
               </EmptyState>
             </div>
           )}
           {teams.data?.list.map((team) => {
             const status = teams.data?.byId.get(team.hackathon_id);
             const hackathon = status?.hackathon;
-            const phase = hackathon ? phaseAt(now, hackathon.starts_at, hackathon.deadline_at) : null;
+            const phase = hackathon
+              ? phaseAt(now, hackathon.starts_at, hackathon.deadline_at)
+              : null;
             return (
               <Link to={`/teams/${team.id}`} className="card team-row" key={team.id}>
                 <div className="team-avatar">{team.name.slice(0, 1).toUpperCase()}</div>
                 <div className="grow">
                   <div className="row gap wrap">
                     <h3>{team.name}</h3>
-                    {team.captain_id === user?.id && <span className="badge badge-captain">капитан</span>}
+                    {team.captain_id === user?.id && (
+                      <span className="badge badge-captain">капитан</span>
+                    )}
                   </div>
                   <div className="muted small">
-                    {hackathon?.title ?? `Хакатон #${team.hackathon_id}`} · {team.members.length}{" "}
-                    {plural(team.members.length, "участник", "участника", "участников")}
+                    {hackathon?.title ?? `Хакатон #${team.hackathon_id}`} · {team.members.length}{' '}
+                    {plural(team.members.length, 'участник', 'участника', 'участников')}
                   </div>
                 </div>
                 {phase && <PhaseBadge phase={phase} />}
-                {hackathon && phase !== "finished" && (
-                  <Countdown compact startsAt={hackathon.starts_at} deadlineAt={hackathon.deadline_at} />
+                {hackathon && phase !== 'finished' && (
+                  <Countdown
+                    compact
+                    startsAt={hackathon.starts_at}
+                    deadlineAt={hackathon.deadline_at}
+                  />
                 )}
                 <Icon name="chevron" />
               </Link>
@@ -112,7 +121,9 @@ export function TeamsPage() {
             <h3>
               <Icon name="key" /> Вступить по коду
             </h3>
-            <p className="muted small">Попросите капитана выпустить код приглашения и вставьте его сюда.</p>
+            <p className="muted small">
+              Попросите капитана выпустить код приглашения и вставьте его сюда.
+            </p>
             <form className="form" onSubmit={join}>
               <label className="field">
                 <span>Invite-код</span>
@@ -128,7 +139,7 @@ export function TeamsPage() {
               </label>
               {error && <Alert tone="error">{error}</Alert>}
               <button className="btn btn-primary btn-block" disabled={busy || !code.trim()}>
-                {busy ? "Проверяем код…" : "Вступить в команду"}
+                {busy ? 'Проверяем код…' : 'Вступить в команду'}
               </button>
             </form>
           </div>

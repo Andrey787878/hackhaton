@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
-import { ApiError } from "../api/errors";
-import { publicApi } from "../api/hackathons";
-import type { LeaderboardEntry } from "../api/types";
-import { Countdown } from "../components/Countdown";
-import { EmptyState, ErrorBox, Loader } from "../components/Feedback";
-import { Icon } from "../components/Icon";
-import { useAsync } from "../hooks/useAsync";
-import { useInterval } from "../hooks/useInterval";
-import { formatDateSeconds, plural } from "../utils/format";
+import { useEffect, useRef, useState } from 'react';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { ApiError } from '../api/errors';
+import { publicApi } from '../api/hackathons';
+import type { LeaderboardEntry } from '../api/types';
+import { Countdown } from '../components/Countdown';
+import { EmptyState, ErrorBox, Loader } from '../components/Feedback';
+import { Icon } from '../components/Icon';
+import { useAsync } from '../hooks/useAsync';
+import { useInterval } from '../hooks/useInterval';
+import { formatDateSeconds, plural } from '../utils/format';
 
 const POLL_MS = 10000;
 
@@ -46,7 +46,7 @@ export function LeaderboardPage() {
   }, [results.data]);
 
   const cases = results.data?.cases ?? [];
-  const selectedId = Number(params.get("case")) || cases[0]?.case_id;
+  const selectedId = Number(params.get('case')) || cases[0]?.case_id;
   const selected = cases.find((item) => item.case_id === selectedId) ?? cases[0];
   const hackathon = status.data?.hackathon;
 
@@ -60,14 +60,22 @@ export function LeaderboardPage() {
           <span className="eyebrow">
             <Icon name="trophy" size={14} /> Публичный рейтинг
           </span>
-          <h1>{hackathon?.title ?? "Рейтинг"}</h1>
+          <h1>{hackathon?.title ?? 'Рейтинг'}</h1>
         </div>
         <div className="row gap wrap">
           <span className="live">
             <span className="live-dot" aria-hidden /> автообновление {POLL_MS / 1000} с
           </span>
-          {updatedAt && <span className="muted small">обновлено {formatDateSeconds(updatedAt.toISOString())}</span>}
-          <button type="button" className="btn btn-sm btn-ghost" onClick={() => void results.reload()}>
+          {updatedAt && (
+            <span className="muted small">
+              обновлено {formatDateSeconds(updatedAt.toISOString())}
+            </span>
+          )}
+          <button
+            type="button"
+            className="btn btn-sm btn-ghost"
+            onClick={() => void results.reload()}
+          >
             <Icon name="refresh" size={14} /> Обновить
           </button>
         </div>
@@ -78,7 +86,11 @@ export function LeaderboardPage() {
           <EmptyState icon="clock" title="Рейтинг откроется после дедлайна">
             Оценивание начинается только после окончания приёма решений.
           </EmptyState>
-          <Countdown startsAt={hackathon.starts_at} deadlineAt={hackathon.deadline_at} onPhaseChange={() => void results.reload()} />
+          <Countdown
+            startsAt={hackathon.starts_at}
+            deadlineAt={hackathon.deadline_at}
+            onPhaseChange={() => void results.reload()}
+          />
         </div>
       ) : (
         <ErrorBox error={results.error} onRetry={results.reload} />
@@ -93,7 +105,7 @@ export function LeaderboardPage() {
               type="button"
               role="tab"
               aria-selected={item.case_id === selected?.case_id}
-              className={item.case_id === selected?.case_id ? "tab active" : "tab"}
+              className={item.case_id === selected?.case_id ? 'tab active' : 'tab'}
               onClick={() => setParams({ case: String(item.case_id) }, { replace: true })}
             >
               {item.title}
@@ -107,7 +119,8 @@ export function LeaderboardPage() {
           <div className="row between wrap gap">
             <h2>{selected.title}</h2>
             <span className="muted small">
-              {selected.entries.length} {plural(selected.entries.length, "команда", "команды", "команд")} в рейтинге
+              {selected.entries.length}{' '}
+              {plural(selected.entries.length, 'команда', 'команды', 'команд')} в рейтинге
             </span>
           </div>
           {selected.entries.length === 0 ? (
@@ -115,11 +128,15 @@ export function LeaderboardPage() {
               Команда попадает в рейтинг после того, как эксперт оценит все критерии.
             </EmptyState>
           ) : (
-            <LeaderboardTable entries={selected.entries} caseId={selected.case_id} changed={changed} />
+            <LeaderboardTable
+              entries={selected.entries}
+              caseId={selected.case_id}
+              changed={changed}
+            />
           )}
           <p className="muted small formula">
-            Итог эксперта = 100 × Σ(вес × (балл − min) / (max − min)) / Σ весов; итог команды — среднее полных
-            оценок экспертов. Равные баллы делят место, порядок — по ID команды.
+            Итог эксперта = 100 × Σ(вес × (балл − min) / (max − min)) / Σ весов; итог команды —
+            среднее полных оценок экспертов. Равные баллы делят место, порядок — по ID команды.
           </p>
         </div>
       )}
@@ -151,7 +168,7 @@ function LeaderboardTable({
           {entries.map((entry) => (
             <tr
               key={entry.team_id}
-              className={`rank-${Math.min(entry.rank, 4)}${changed.has(`${caseId}:${entry.team_id}`) ? " flash" : ""}`}
+              className={`rank-${Math.min(entry.rank, 4)}${changed.has(`${caseId}:${entry.team_id}`) ? ' flash' : ''}`}
             >
               <td className="num">
                 <span className="rank-pill">{entry.rank}</span>

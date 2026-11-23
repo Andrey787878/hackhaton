@@ -1,4 +1,5 @@
 """Measure sequential local API latency for a reproducible smoke check."""
+
 import argparse
 import math
 from time import perf_counter

@@ -2,10 +2,20 @@ from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Annotated, Literal
 
-from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, StringConstraints, field_validator, model_validator
+from pydantic import (
+    AwareDatetime,
+    BaseModel,
+    ConfigDict,
+    Field,
+    StringConstraints,
+    field_validator,
+    model_validator,
+)
 
 Title = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
-Description = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=20000)]
+Description = Annotated[
+    str, StringConstraints(strip_whitespace=True, min_length=1, max_length=20000)
+]
 
 
 class CaseWrite(BaseModel):

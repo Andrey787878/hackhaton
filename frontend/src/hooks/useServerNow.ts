@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { onClockChange, serverNow, syncServerClock } from "../utils/serverClock";
+import { useEffect, useState } from 'react';
+import { onClockChange, serverNow, syncServerClock } from '../utils/serverClock';
 
 /** Текущее серверное время, обновляется раз в секунду. */
 export function useServerNow(tickMs = 1000): number {

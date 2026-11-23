@@ -27,17 +27,27 @@ def call(svc, action):
 
 
 @router.get("", response_model=list[NotificationRead])
-def list_notifications(unread_only: bool = False, limit: int = Query(20, ge=1, le=100),
-                       offset: int = Query(0, ge=0),
-                       context: CurrentUserContext = Depends(get_current_user_context), svc=Depends(service)):
+def list_notifications(
+    unread_only: bool = False,
+    limit: int = Query(20, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+    context: CurrentUserContext = Depends(get_current_user_context),
+    svc=Depends(service),
+):
     return call(svc, lambda: svc.list(context.user_id, unread_only, limit, offset))
 
 
 @router.get("/unread-count", response_model=UnreadCount)
-def unread_count(context: CurrentUserContext = Depends(get_current_user_context), svc=Depends(service)):
+def unread_count(
+    context: CurrentUserContext = Depends(get_current_user_context), svc=Depends(service)
+):
     return {"count": call(svc, lambda: svc.unread_count(context.user_id))}
 
 
 @router.post("/{notification_id}/read", response_model=NotificationRead)
-def mark_read(notification_id: int, context: CurrentUserContext = Depends(get_current_user_context), svc=Depends(service)):
+def mark_read(
+    notification_id: int,
+    context: CurrentUserContext = Depends(get_current_user_context),
+    svc=Depends(service),
+):
     return call(svc, lambda: svc.mark_read(context.user_id, notification_id))

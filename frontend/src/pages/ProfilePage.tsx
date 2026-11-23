@@ -1,22 +1,22 @@
-import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
-import { authApi } from "../api/auth";
-import { messageOf } from "../api/errors";
-import { setTokens } from "../auth/tokenStorage";
-import { useAuth } from "../auth/AuthContext";
-import { CopyButton, RoleBadge } from "../components/Badges";
-import { Alert, ErrorBox, Loader } from "../components/Feedback";
-import { Icon } from "../components/Icon";
-import { useAsync } from "../hooks/useAsync";
-import { formatDate, initials } from "../utils/format";
-import { displayName } from "../utils/roles";
+import { useState, type FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { authApi } from '../api/auth';
+import { messageOf } from '../api/errors';
+import { setTokens } from '../auth/tokenStorage';
+import { useAuth } from '../auth/AuthContext';
+import { CopyButton, RoleBadge } from '../components/Badges';
+import { Alert, ErrorBox, Loader } from '../components/Feedback';
+import { Icon } from '../components/Icon';
+import { useAsync } from '../hooks/useAsync';
+import { formatDate, initials } from '../utils/format';
+import { displayName } from '../utils/roles';
 
 export function ProfilePage() {
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
   const sessions = useAsync(() => authApi.sessions(), []);
-  const [name, setName] = useState(user?.display_name ?? "");
-  const [birthday, setBirthday] = useState(user?.birthday ?? "");
+  const [name, setName] = useState(user?.display_name ?? '');
+  const [birthday, setBirthday] = useState(user?.birthday ?? '');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
@@ -29,7 +29,9 @@ export function ProfilePage() {
     setError(null);
     setSaved(false);
     try {
-      setUser(await authApi.updateMe({ display_name: name.trim() || null, birthday: birthday || null }));
+      setUser(
+        await authApi.updateMe({ display_name: name.trim() || null, birthday: birthday || null }),
+      );
       setSaved(true);
     } catch (err) {
       setError(messageOf(err));
@@ -39,12 +41,12 @@ export function ProfilePage() {
   };
 
   const logoutAll = async () => {
-    if (!window.confirm("Завершить все сессии, включая текущую?")) return;
+    if (!window.confirm('Завершить все сессии, включая текущую?')) return;
     try {
       await authApi.logoutAll();
     } finally {
       setTokens(null);
-      navigate("/login");
+      navigate('/login');
     }
   };
 
@@ -89,7 +91,7 @@ export function ProfilePage() {
           {error && <Alert tone="error">{error}</Alert>}
           {saved && <Alert tone="success">Профиль сохранён.</Alert>}
           <button className="btn btn-primary" disabled={busy}>
-            {busy ? "Сохраняем…" : "Сохранить"}
+            {busy ? 'Сохраняем…' : 'Сохранить'}
           </button>
         </form>
 
@@ -104,9 +106,11 @@ export function ProfilePage() {
               <li key={session.id}>
                 <Icon name="server" size={16} />
                 <div className="grow small">
-                  <div className="strong">{session.user_agent?.slice(0, 60) || "Неизвестный клиент"}</div>
+                  <div className="strong">
+                    {session.user_agent?.slice(0, 60) || 'Неизвестный клиент'}
+                  </div>
                   <div className="muted">
-                    {session.ip ?? "—"} · вход {formatDate(session.created_at)}
+                    {session.ip ?? '—'} · вход {formatDate(session.created_at)}
                   </div>
                 </div>
               </li>

@@ -37,7 +37,6 @@ from app.schemas import (
     UpdateRoleRequest,
 )
 
-
 router = APIRouter(prefix="/admin", tags=["rbac"])
 _ResultT = TypeVar("_ResultT")
 
@@ -315,7 +314,9 @@ def soft_delete_role(
     rbac_service: RbacService = Depends(get_rbac_service),
 ) -> MessageResponseDTO:
     """Мягко удаляет роль."""
-    _call_rbac(lambda: rbac_service.soft_delete_role(role_id=role_id, actor_user_id=context.user_id))
+    _call_rbac(
+        lambda: rbac_service.soft_delete_role(role_id=role_id, actor_user_id=context.user_id)
+    )
     return MessageResponseDTO(message="Роль мягко удалена.")
 
 

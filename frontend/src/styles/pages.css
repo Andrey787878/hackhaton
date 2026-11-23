@@ -11,8 +11,7 @@
   border: 1px solid var(--border);
   background:
     linear-gradient(135deg, rgba(47, 107, 255, 0.12), transparent 45%),
-    linear-gradient(315deg, rgba(229, 56, 59, 0.1), transparent 45%),
-    var(--surface);
+    linear-gradient(315deg, rgba(229, 56, 59, 0.1), transparent 45%), var(--surface);
 }
 .hero-glow {
   position: absolute;
@@ -94,7 +93,7 @@
   overflow: hidden;
 }
 .hack-card::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0 0 auto 0;
   height: 3px;
@@ -491,7 +490,9 @@
   border: 1.5px dashed var(--border-strong);
   background: var(--bg-2);
   color: var(--text-2);
-  transition: border-color 0.15s, background 0.15s;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
 }
 .dropzone:hover,
 .dropzone:focus-within {
@@ -549,7 +550,7 @@
   align-items: center;
   gap: 14px;
 }
-.criterion-input input[type="range"] {
+.criterion-input input[type='range'] {
   flex: 1;
   padding: 0;
   border: none;
@@ -558,7 +559,7 @@
   accent-color: var(--blue);
   height: 28px;
 }
-.criterion-input input[type="range"].unset {
+.criterion-input input[type='range'].unset {
   opacity: 0.4;
 }
 .score-input {
@@ -569,7 +570,8 @@
 }
 .total-card {
   text-align: center;
-  background: linear-gradient(160deg, rgba(47, 107, 255, 0.14), rgba(229, 56, 59, 0.12)), var(--surface);
+  background:
+    linear-gradient(160deg, rgba(47, 107, 255, 0.14), rgba(229, 56, 59, 0.12)), var(--surface);
 }
 .total-value {
   font-size: 3rem;
@@ -605,7 +607,7 @@
   color: var(--muted);
 }
 .checklist li::before {
-  content: "○";
+  content: '○';
   margin-right: 8px;
   color: var(--red-2);
 }
@@ -613,7 +615,7 @@
   color: var(--text);
 }
 .checklist li.ok::before {
-  content: "●";
+  content: '●';
   color: var(--blue-2);
 }
 .criteria-editor {
@@ -697,7 +699,9 @@
 }
 .notification.unread {
   border-color: var(--blue-line);
-  box-shadow: inset 3px 0 0 var(--blue), var(--shadow);
+  box-shadow:
+    inset 3px 0 0 var(--blue),
+    var(--shadow);
 }
 .notification-icon {
   width: 38px;

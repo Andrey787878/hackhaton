@@ -3,8 +3,9 @@
 Rows created by the fixture are rolled back. The persistence smoke test
 commits and then removes only its own randomly named account.
 """
-from datetime import datetime, timedelta, timezone
+
 import secrets
+from datetime import datetime, timedelta, timezone
 
 import pytest
 from sqlalchemy import text
@@ -19,12 +20,21 @@ from scripts.verify_database import exercise_persistence, verify_schema
 def graph():
     with SessionLocal() as db:
         token = secrets.token_hex(8)
-        user = User(username="db_" + token, email=f"{token}@example.invalid", password_hash="unused-in-rollback-test")
+        user = User(
+            username="db_" + token,
+            email=f"{token}@example.invalid",
+            password_hash="unused-in-rollback-test",
+        )
         db.add(user)
         db.flush()
         now = datetime.now(timezone.utc)
-        event = Hackathon(organizer_id=user.id, title="Database test", description="Fixture",
-                          starts_at=now, deadline_at=now + timedelta(days=1))
+        event = Hackathon(
+            organizer_id=user.id,
+            title="Database test",
+            description="Fixture",
+            starts_at=now,
+            deadline_at=now + timedelta(days=1),
+        )
         db.add(event)
         db.flush()
         case = Case(hackathon_id=event.id, title="Case", description="Fixture")
@@ -56,30 +66,55 @@ def test_application_connections_use_utc():
 def test_username_is_unique_ignoring_case(graph):
     db, user, *_ = graph
     with pytest.raises(IntegrityError), db.begin_nested():
-        db.add(User(username=user.username.upper(), email="other@example.invalid", password_hash="unused"))
+        db.add(
+            User(
+                username=user.username.upper(),
+                email="other@example.invalid",
+                password_hash="unused",
+            )
+        )
         db.flush()
 
 
 def test_foreign_key_rejects_missing_organizer(graph):
     db, _, _, _, _, now = graph
     with pytest.raises(IntegrityError), db.begin_nested():
-        db.add(Hackathon(organizer_id=-1, title="Invalid", description="Fixture",
-                         starts_at=now, deadline_at=now + timedelta(days=1)))
+        db.add(
+            Hackathon(
+                organizer_id=-1,
+                title="Invalid",
+                description="Fixture",
+                starts_at=now,
+                deadline_at=now + timedelta(days=1),
+            )
+        )
         db.flush()
 
 
 def test_deadline_must_follow_start(graph):
     db, user, _, _, _, now = graph
     with pytest.raises(IntegrityError), db.begin_nested():
-        db.add(Hackathon(organizer_id=user.id, title="Invalid", description="Fixture",
-                         starts_at=now, deadline_at=now))
+        db.add(
+            Hackathon(
+                organizer_id=user.id,
+                title="Invalid",
+                description="Fixture",
+                starts_at=now,
+                deadline_at=now,
+            )
+        )
         db.flush()
 
 
 def test_team_member_cannot_reference_another_hackathon(graph):
     db, user, event, _, team, now = graph
-    other = Hackathon(organizer_id=user.id, title="Other", description="Fixture",
-                      starts_at=now, deadline_at=now + timedelta(days=1))
+    other = Hackathon(
+        organizer_id=user.id,
+        title="Other",
+        description="Fixture",
+        starts_at=now,
+        deadline_at=now + timedelta(days=1),
+    )
     db.add(other)
     db.flush()
     with pytest.raises(IntegrityError), db.begin_nested():

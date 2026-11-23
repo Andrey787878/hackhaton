@@ -1,11 +1,11 @@
 // Единая точка HTTP-взаимодействия с FastAPI: базовый URL, Bearer-токен,
 // обновление пары токенов при 401, разбор ошибок, загрузка с прогрессом.
 
-import { getTokens, reloadTokens, setTokens, type Tokens } from "../auth/tokenStorage";
-import { ApiError, errorFromBody } from "./errors";
-import type { AuthSuccess } from "./types";
+import { getTokens, reloadTokens, setTokens, type Tokens } from '../auth/tokenStorage';
+import { ApiError, errorFromBody } from './errors';
+import type { AuthSuccess } from './types';
 
-export const API_BASE: string = import.meta.env.VITE_API_BASE ?? "/api/v1";
+export const API_BASE: string = import.meta.env.VITE_API_BASE ?? '/api/v1';
 
 type Query = Record<string, string | number | boolean | undefined | null>;
 
@@ -18,11 +18,11 @@ export interface RequestOptions {
 }
 
 export function buildUrl(path: string, query?: Query): string {
-  const url = API_BASE.replace(/\/$/, "") + path;
+  const url = API_BASE.replace(/\/$/, '') + path;
   if (!query) return url;
   const params = new URLSearchParams();
   for (const [key, value] of Object.entries(query)) {
-    if (value !== undefined && value !== null && value !== "") params.set(key, String(value));
+    if (value !== undefined && value !== null && value !== '') params.set(key, String(value));
   }
   const qs = params.toString();
   return qs ? `${url}?${qs}` : url;
@@ -30,8 +30,8 @@ export function buildUrl(path: string, query?: Query): string {
 
 async function parseBody(response: Response): Promise<unknown> {
   if (response.status === 204) return undefined;
-  const type = response.headers.get("content-type") ?? "";
-  if (type.includes("application/json")) {
+  const type = response.headers.get('content-type') ?? '';
+  if (type.includes('application/json')) {
     try {
       return await response.json();
     } catch {
@@ -57,8 +57,8 @@ export function refreshTokens(failedAccess?: string): Promise<boolean> {
 }
 
 function runExclusive(task: () => Promise<boolean>): Promise<boolean> {
-  const locks = typeof navigator !== "undefined" ? navigator.locks : undefined;
-  return locks ? locks.request("hackpulse-refresh", task) : task();
+  const locks = typeof navigator !== 'undefined' ? navigator.locks : undefined;
+  return locks ? locks.request('hackpulse-refresh', task) : task();
 }
 
 async function doRefresh(failedAccess?: string): Promise<boolean> {
@@ -67,9 +67,9 @@ async function doRefresh(failedAccess?: string): Promise<boolean> {
   // Другая вкладка уже обновила пару, пока мы ждали блокировку.
   if (failedAccess && latest.access !== failedAccess) return true;
   try {
-    const response = await fetch(buildUrl("/auth/refresh"), {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
+    const response = await fetch(buildUrl('/auth/refresh'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify({ refresh_token: latest.refresh }),
     });
     if (!response.ok) {
@@ -87,9 +87,10 @@ async function doRefresh(failedAccess?: string): Promise<boolean> {
 // ---------- fetch ----------
 
 function headersFor(tokens: Tokens | null, auth: boolean, body: unknown): Headers {
-  const headers = new Headers({ Accept: "application/json" });
-  if (body !== undefined && !(body instanceof FormData)) headers.set("Content-Type", "application/json");
-  if (auth && tokens) headers.set("Authorization", `Bearer ${tokens.access}`);
+  const headers = new Headers({ Accept: 'application/json' });
+  if (body !== undefined && !(body instanceof FormData))
+    headers.set('Content-Type', 'application/json');
+  if (auth && tokens) headers.set('Authorization', `Bearer ${tokens.access}`);
   return headers;
 }
 
@@ -119,13 +120,17 @@ async function send(method: string, path: string, options: RequestOptions): Prom
       }
     }
   } catch (error) {
-    if (error instanceof DOMException && error.name === "AbortError") throw error;
-    throw new ApiError(0, "Сервер недоступен. Проверьте, что API запущен.");
+    if (error instanceof DOMException && error.name === 'AbortError') throw error;
+    throw new ApiError(0, 'Сервер недоступен. Проверьте, что API запущен.');
   }
   return response;
 }
 
-export async function request<T>(method: string, path: string, options: RequestOptions = {}): Promise<T> {
+export async function request<T>(
+  method: string,
+  path: string,
+  options: RequestOptions = {},
+): Promise<T> {
   const response = await send(method, path, options);
   const body = await parseBody(response);
   if (!response.ok) throw errorFromBody(response.status, body);
@@ -133,14 +138,14 @@ export async function request<T>(method: string, path: string, options: RequestO
 }
 
 export const api = {
-  get: <T>(path: string, options?: RequestOptions) => request<T>("GET", path, options),
+  get: <T>(path: string, options?: RequestOptions) => request<T>('GET', path, options),
   post: <T>(path: string, body?: unknown, options?: RequestOptions) =>
-    request<T>("POST", path, { ...options, body }),
+    request<T>('POST', path, { ...options, body }),
   put: <T>(path: string, body?: unknown, options?: RequestOptions) =>
-    request<T>("PUT", path, { ...options, body }),
+    request<T>('PUT', path, { ...options, body }),
   patch: <T>(path: string, body?: unknown, options?: RequestOptions) =>
-    request<T>("PATCH", path, { ...options, body }),
-  delete: <T = void>(path: string, options?: RequestOptions) => request<T>("DELETE", path, options),
+    request<T>('PATCH', path, { ...options, body }),
+  delete: <T = void>(path: string, options?: RequestOptions) => request<T>('DELETE', path, options),
 };
 
 // ---------- binary download ----------
@@ -160,13 +165,13 @@ export function filenameFrom(disposition: string | null, fallback: string): stri
 
 /** Скачивает приватный файл через API (с токеном) и отдаёт его браузеру. */
 export async function download(path: string, fallbackName: string): Promise<void> {
-  const response = await send("GET", path, {});
+  const response = await send('GET', path, {});
   if (!response.ok) throw errorFromBody(response.status, await parseBody(response));
   const blob = await response.blob();
   const href = URL.createObjectURL(blob);
-  const link = document.createElement("a");
+  const link = document.createElement('a');
   link.href = href;
-  link.download = filenameFrom(response.headers.get("content-disposition"), fallbackName);
+  link.download = filenameFrom(response.headers.get('content-disposition'), fallbackName);
   document.body.appendChild(link);
   link.click();
   link.remove();
@@ -188,9 +193,9 @@ function xhrUpload<T>(
 ): Promise<{ status: number; body: unknown; result?: T }> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", buildUrl(path));
-    xhr.setRequestHeader("Accept", "application/json");
-    if (tokens) xhr.setRequestHeader("Authorization", `Bearer ${tokens.access}`);
+    xhr.open('POST', buildUrl(path));
+    xhr.setRequestHeader('Accept', 'application/json');
+    if (tokens) xhr.setRequestHeader('Authorization', `Bearer ${tokens.access}`);
     xhr.upload.onprogress = (event) => {
       if (event.lengthComputable) onProgress?.({ loaded: event.loaded, total: event.total });
     };
@@ -203,7 +208,7 @@ function xhrUpload<T>(
       }
       resolve({ status: xhr.status, body, result: body as T });
     };
-    xhr.onerror = () => reject(new ApiError(0, "Сервер недоступен. Проверьте, что API запущен."));
+    xhr.onerror = () => reject(new ApiError(0, 'Сервер недоступен. Проверьте, что API запущен.'));
     xhr.send(form);
   });
 }
@@ -219,6 +224,7 @@ export async function upload<T>(
     tokens = getTokens();
     outcome = await xhrUpload<T>(path, form, tokens, onProgress);
   }
-  if (outcome.status < 200 || outcome.status >= 300) throw errorFromBody(outcome.status, outcome.body);
+  if (outcome.status < 200 || outcome.status >= 300)
+    throw errorFromBody(outcome.status, outcome.body);
   return outcome.result as T;
 }

@@ -1,8 +1,16 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { authApi, type RegisterInput } from "../api/auth";
-import { ApiError } from "../api/errors";
-import type { User } from "../api/types";
-import { getTokens, onTokensChange, setTokens } from "./tokenStorage";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
+import { authApi, type RegisterInput } from '../api/auth';
+import { ApiError } from '../api/errors';
+import type { User } from '../api/types';
+import { getTokens, onTokensChange, setTokens } from './tokenStorage';
 
 interface AuthValue {
   user: User | null;
@@ -85,6 +93,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth(): AuthValue {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth вне AuthProvider");
+  if (!context) throw new Error('useAuth вне AuthProvider');
   return context;
 }

@@ -1,11 +1,9 @@
 from functools import lru_cache
 from typing import Any, Literal
 
-from sqlalchemy import URL
-
 from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
+from sqlalchemy import URL
 
 HS256_MIN_SECRET_BYTES = 32
 
@@ -59,7 +57,9 @@ class Settings(BaseSettings):
 
     minio_root_user: str = Field(..., alias="MINIO_ROOT_USER", min_length=3)
     minio_root_password: str = Field(..., alias="MINIO_ROOT_PASSWORD", min_length=16)
-    s3_bucket: str = Field(default="hackhaton-submissions", alias="S3_BUCKET", pattern=r"^[a-z0-9][a-z0-9-]{2,62}$")
+    s3_bucket: str = Field(
+        default="hackhaton-submissions", alias="S3_BUCKET", pattern=r"^[a-z0-9][a-z0-9-]{2,62}$"
+    )
 
     @field_validator("refresh_token_pepper", mode="before")
     @classmethod

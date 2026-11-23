@@ -3,16 +3,16 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
-from app import models
+from app import models as _models  # noqa: F401
 from app.auth_routes import router as auth_router
 from app.config import get_settings
 from app.dependencies import PermissionDeniedError
-from app.rbac_routes import router as rbac_router
 from app.hackathon_routes import router as hackathon_router
-from app.team_routes import router as team_router
-from app.submission_routes import router as submission_router
-from app.scoring_routes import router as scoring_router
 from app.notification_routes import router as notification_router
+from app.rbac_routes import router as rbac_router
+from app.scoring_routes import router as scoring_router
+from app.submission_routes import router as submission_router
+from app.team_routes import router as team_router
 
 
 @asynccontextmanager
@@ -35,6 +35,7 @@ def create_app() -> FastAPI:
     app.include_router(notification_router, prefix="/api/v1")
 
     from app.health_routes import router as health_router
+
     app.include_router(health_router, prefix="/api/v1")
 
     return app

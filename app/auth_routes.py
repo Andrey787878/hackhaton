@@ -7,8 +7,8 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.auth_service import (
-    AuthService,
     AuthPersistenceError,
+    AuthService,
     AuthServiceError,
     InvalidCredentialsError,
     InvalidRefreshTokenError,
@@ -32,7 +32,6 @@ from app.dto import (
 )
 from app.schemas import LoginRequest, ProfileUpdateRequest, RefreshRequest, RegisterRequest
 from app.token_service import TokenServiceError
-
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 _ResultT = TypeVar("_ResultT")
@@ -133,9 +132,12 @@ def update_me(
     auth_service: AuthService = Depends(get_auth_service),
 ) -> UserDTO:
     """Изменить свой профиль. Роли, логин и email через этот метод не меняются."""
-    return _call_auth(lambda: auth_service.update_profile(
-        context.user_id, payload.model_dump(exclude_unset=True),
-    ))
+    return _call_auth(
+        lambda: auth_service.update_profile(
+            context.user_id,
+            payload.model_dump(exclude_unset=True),
+        )
+    )
 
 
 @router.post("/out", response_model=MessageResponseDTO, status_code=status.HTTP_200_OK)

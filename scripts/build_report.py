@@ -1,4 +1,5 @@
 """Build the mini-report DOCX from verified repository evidence."""
+
 from pathlib import Path
 
 from docx import Document
@@ -6,7 +7,6 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Cm, Pt, RGBColor
-
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "docs" / "mini-report-backend.docx"
@@ -48,7 +48,11 @@ def heading(doc, value):
 
 def hyperlink(paragraph, label, url):
     part = paragraph.part
-    rid = part.relate_to(url, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink", is_external=True)
+    rid = part.relate_to(
+        url,
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",
+        is_external=True,
+    )
     element = OxmlElement("w:hyperlink")
     element.set(qn("r:id"), rid)
     run = OxmlElement("w:r")
@@ -124,8 +128,10 @@ def build():
     footer.alignment = WD_ALIGN_PARAGRAPH.CENTER
     page_number(footer)
 
-    for label in ("ФГБОУ ВО «ЮГОРСКИЙ ГОСУДАРСТВЕННЫЙ УНИВЕРСИТЕТ»",
-                  "ИНЖЕНЕРНАЯ ШКОЛА ЦИФРОВЫХ ТЕХНОЛОГИЙ"):
+    for label in (
+        "ФГБОУ ВО «ЮГОРСКИЙ ГОСУДАРСТВЕННЫЙ УНИВЕРСИТЕТ»",
+        "ИНЖЕНЕРНАЯ ШКОЛА ЦИФРОВЫХ ТЕХНОЛОГИЙ",
+    ):
         p = text(doc, label, align=WD_ALIGN_PARAGRAPH.CENTER, indent=False)
         p.paragraph_format.space_after = Pt(7)
     for _ in range(6):
@@ -133,59 +139,98 @@ def build():
     p = text(doc, "МИНИ-ОТЧЁТ", align=WD_ALIGN_PARAGRAPH.CENTER, indent=False)
     p.paragraph_format.space_after = Pt(6)
     font(p.runs[0], bold=True)
-    text(doc, "по разработке серверной части веб-приложения",
-         align=WD_ALIGN_PARAGRAPH.CENTER, indent=False)
-    p = text(doc, "«Платформа онлайн-хакатонов и соревнований»",
-             align=WD_ALIGN_PARAGRAPH.CENTER, indent=False)
+    text(
+        doc,
+        "по разработке серверной части веб-приложения",
+        align=WD_ALIGN_PARAGRAPH.CENTER,
+        indent=False,
+    )
+    p = text(
+        doc,
+        "«Платформа онлайн-хакатонов и соревнований»",
+        align=WD_ALIGN_PARAGRAPH.CENTER,
+        indent=False,
+    )
     p.paragraph_format.space_after = Pt(18)
     for _ in range(4):
         doc.add_paragraph()
-    text(doc, "Выполнили: студенты группы ПИ41Б, команда № 3",
-         align=WD_ALIGN_PARAGRAPH.RIGHT, indent=False)
-    text(doc, "Полуянов, Бойдаченко, Абдурахман, Борисов",
-         align=WD_ALIGN_PARAGRAPH.RIGHT, indent=False)
-    text(doc, "Проверил: Исмагулов Милан Ерикович",
-         align=WD_ALIGN_PARAGRAPH.RIGHT, indent=False)
+    text(
+        doc,
+        "Выполнили: студенты группы ПИ41Б, команда № 3",
+        align=WD_ALIGN_PARAGRAPH.RIGHT,
+        indent=False,
+    )
+    text(
+        doc,
+        "Полуянов, Бойдаченко, Абдурахман, Борисов",
+        align=WD_ALIGN_PARAGRAPH.RIGHT,
+        indent=False,
+    )
+    text(doc, "Проверил: Исмагулов Милан Ерикович", align=WD_ALIGN_PARAGRAPH.RIGHT, indent=False)
     for _ in range(5):
         doc.add_paragraph()
     text(doc, "г. Ханты-Мансийск, 2026 г.", align=WD_ALIGN_PARAGRAPH.CENTER, indent=False)
     doc.add_page_break()
 
     heading(doc, "1 ЦЕЛЬ И РЕЗУЛЬТАТ РАБОТЫ")
-    text(doc, "Цель работы — реализовать работоспособный бэкенд платформы онлайн-хакатонов "
-         "с постоянным хранением, контролем доступа, серверным дедлайном сдачи и API "
-         "для команд, организаторов и экспертов.")
-    text(doc, "Разработаны авторизация и роли, управление хакатонами и кейсами, команды "
-         "и приглашения, приём ссылок и архивов, экспертная оценка по критериям, "
-         "публичный рейтинг и журнал уведомлений. API доступен через Swagger UI.")
+    text(
+        doc,
+        "Цель работы — реализовать работоспособный бэкенд платформы онлайн-хакатонов "
+        "с постоянным хранением, контролем доступа, серверным дедлайном сдачи и API "
+        "для команд, организаторов и экспертов.",
+    )
+    text(
+        doc,
+        "Разработаны авторизация и роли, управление хакатонами и кейсами, команды "
+        "и приглашения, приём ссылок и архивов, экспертная оценка по критериям, "
+        "публичный рейтинг и журнал уведомлений. API доступен через Swagger UI.",
+    )
 
     heading(doc, "2 ССЫЛКА НА АКТУАЛЬНЫЙ КОД")
-    text(doc, "Код серверной части опубликован в открытом репозитории GitHub "
-         "в ветке backend. Адрес ветки:")
+    text(
+        doc,
+        "Код серверной части опубликован в открытом репозитории GitHub "
+        "в ветке backend. Адрес ветки:",
+    )
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.LEFT
     p.paragraph_format.first_line_indent = Cm(0)
     hyperlink(p, BRANCH, BRANCH)
-    text(doc, "В ветке размещены исходный код, миграции БД, Docker Compose, тесты "
-         "и инструкция запуска. Демо-пароли и локальная конфигурация исключены из Git.")
+    text(
+        doc,
+        "В ветке размещены исходный код, миграции БД, Docker Compose, тесты "
+        "и инструкция запуска. Демо-пароли и локальная конфигурация исключены из Git.",
+    )
 
     heading(doc, "3 ВЫБРАННЫЙ СТЕК ТЕХНОЛОГИЙ")
-    text(doc, "Python 3.11 и FastAPI выбраны для типизированного HTTP API, автоматической "
-         "валидации входных данных и генерации OpenAPI/Swagger. Pydantic описывает "
-         "схемы запросов и ответов.")
-    text(doc, "PostgreSQL 17 хранит пользователей, права, хакатоны, команды, метаданные "
-         "сдач и оценки. SQLAlchemy 2 отделяет модели данных от маршрутов, Alembic "
-         "обеспечивает версионируемые миграции.")
-    text(doc, "MinIO предоставляет S3-совместимое приватное хранение архивов; в SQL "
-         "находятся только метаданные и ключ объекта. Docker Compose запускает API, "
-         "БД, MinIO и служебные контейнеры миграции и инициализации bucket. "
-         "PyJWT и bcrypt применяются для сессий и хэширования паролей; Pytest "
-         "проверяет бизнес-сценарии с реальными PostgreSQL и MinIO.")
+    text(
+        doc,
+        "Python 3.11 и FastAPI выбраны для типизированного HTTP API, автоматической "
+        "валидации входных данных и генерации OpenAPI/Swagger. Pydantic описывает "
+        "схемы запросов и ответов.",
+    )
+    text(
+        doc,
+        "PostgreSQL 17 хранит пользователей, права, хакатоны, команды, метаданные "
+        "сдач и оценки. SQLAlchemy 2 отделяет модели данных от маршрутов, Alembic "
+        "обеспечивает версионируемые миграции.",
+    )
+    text(
+        doc,
+        "MinIO предоставляет S3-совместимое приватное хранение архивов; в SQL "
+        "находятся только метаданные и ключ объекта. Docker Compose запускает API, "
+        "БД, MinIO и служебные контейнеры миграции и инициализации bucket. "
+        "PyJWT и bcrypt применяются для сессий и хэширования паролей; Pytest "
+        "проверяет бизнес-сценарии с реальными PostgreSQL и MinIO.",
+    )
 
     heading(doc, "4 АРХИТЕКТУРА И СТРУКТУРА")
-    text(doc, "HTTP-запрос проходит через маршрут-контроллер, проверку пользователя "
-         "и входных данных, сервис бизнес-логики, ORM и PostgreSQL. Архив передаётся "
-         "через S3-адаптер в MinIO. Основные каталоги представлены ниже.")
+    text(
+        doc,
+        "HTTP-запрос проходит через маршрут-контроллер, проверку пользователя "
+        "и входных данных, сервис бизнес-логики, ORM и PostgreSQL. Архив передаётся "
+        "через S3-адаптер в MinIO. Основные каталоги представлены ниже.",
+    )
     tree = (
         "hackhaton/\n"
         "├── app/\n"
@@ -212,48 +257,82 @@ def build():
     p.paragraph_format.space_before = Pt(7)
     p.paragraph_format.space_after = Pt(7)
     font(p.add_run(tree), size=10.5, name="Courier New")
-    text(doc, "Файлы *_routes.py выполняют роль контроллеров: принимают HTTP-запросы "
-         "и возвращают ответы. Файлы *_service.py содержат правила доступа, "
-         "дедлайны и транзакции. В models.py описаны ORM-модели, в *_schemas.py — "
-         "контракты API. Каталог alembic/versions хранит историю схемы БД, "
-         "tests/ — автоматические проверки.")
+    text(
+        doc,
+        "Файлы *_routes.py выполняют роль контроллеров: принимают HTTP-запросы "
+        "и возвращают ответы. Файлы *_service.py содержат правила доступа, "
+        "дедлайны и транзакции. В models.py описаны ORM-модели, в *_schemas.py — "
+        "контракты API. Каталог alembic/versions хранит историю схемы БД, "
+        "tests/ — автоматические проверки.",
+    )
 
     heading(doc, "5 ПОДТВЕРЖДЕНИЕ РАБОТОСПОСОБНОСТИ")
-    text(doc, "Swagger UI запущенного сервера содержит 73 операции в восьми разделах. "
-         "На рисунках 1–4 последовательно показаны все группы API. Полная схема "
-         "OpenAPI доступна по адресу /openapi.json.")
+    text(
+        doc,
+        "Swagger UI запущенного сервера содержит 73 операции в восьми разделах. "
+        "На рисунках 1–4 последовательно показаны все группы API. Полная схема "
+        "OpenAPI доступна по адресу /openapi.json.",
+    )
     for number, filename, description, caption in (
-        (1, "swagger-1.png", "На рисунке 1 показаны авторизация и начало управления ролями и правами.",
-         "Swagger UI: авторизация и управление доступом, часть 1"),
-        (2, "swagger-2.png", "На рисунке 2 показаны оставшиеся маршруты прав доступа и маршруты хакатонов.",
-         "Swagger UI: управление доступом, часть 2, и хакатоны"),
-        (3, "swagger-3.png", "На рисунке 3 показаны команды, сдача решений и экспертная оценка.",
-         "Swagger UI: команды, решения и оценка"),
-        (4, "swagger-4.png", "На рисунке 4 показаны уведомления и проверка работоспособности.",
-         "Swagger UI: уведомления и проверка API"),
+        (
+            1,
+            "swagger-1.png",
+            "На рисунке 1 показаны авторизация и начало управления ролями и правами.",
+            "Swagger UI: авторизация и управление доступом, часть 1",
+        ),
+        (
+            2,
+            "swagger-2.png",
+            "На рисунке 2 показаны оставшиеся маршруты прав доступа и маршруты хакатонов.",
+            "Swagger UI: управление доступом, часть 2, и хакатоны",
+        ),
+        (
+            3,
+            "swagger-3.png",
+            "На рисунке 3 показаны команды, сдача решений и экспертная оценка.",
+            "Swagger UI: команды, решения и оценка",
+        ),
+        (
+            4,
+            "swagger-4.png",
+            "На рисунке 4 показаны уведомления и проверка работоспособности.",
+            "Swagger UI: уведомления и проверка API",
+        ),
     ):
         p = text(doc, description)
         p.paragraph_format.keep_with_next = True
         picture(doc, filename, number, caption)
-    p = text(doc, "На рисунке 5 приведён успешный ответ GET /api/v1/health: "
-             "сервер и подключение к PostgreSQL исправны.")
+    p = text(
+        doc,
+        "На рисунке 5 приведён успешный ответ GET /api/v1/health: "
+        "сервер и подключение к PostgreSQL исправны.",
+    )
     p.paragraph_format.keep_with_next = True
     picture(doc, "health.png", 5, "Ответ проверки API и базы данных")
-    p = text(doc, "На рисунке 6 представлен ответ публичного GET-запроса рейтинга "
-             "для кейса № 3: команда получила итог 85,00 балла по весовым критериям.")
+    p = text(
+        doc,
+        "На рисунке 6 представлен ответ публичного GET-запроса рейтинга "
+        "для кейса № 3: команда получила итог 85,00 балла по весовым критериям.",
+    )
     p.paragraph_format.keep_with_next = True
     picture(doc, "leaderboard.png", 6, "Публичный рейтинг по результатам экспертной оценки")
-    text(doc, "Дополнительно выполнены 87 интеграционных тестов. Сквозной сценарий "
-         "проверил публикацию хакатона, создание команды, сдачу архива, назначение "
-         "эксперта, оценку и рейтинг. Сдача после дедлайна отклонена с HTTP 409; "
-         "анонимное скачивание архива — с HTTP 401. Проверка alembic check не "
-         "обнаружила расхождений между моделями и миграциями.")
+    text(
+        doc,
+        "Дополнительно выполнены 87 интеграционных тестов. Сквозной сценарий "
+        "проверил публикацию хакатона, создание команды, сдачу архива, назначение "
+        "эксперта, оценку и рейтинг. Сдача после дедлайна отклонена с HTTP 409; "
+        "анонимное скачивание архива — с HTTP 401. Проверка alembic check не "
+        "обнаружила расхождений между моделями и миграциями.",
+    )
 
     heading(doc, "6 ЗАКЛЮЧЕНИЕ")
-    text(doc, "Основная серверная бизнес-логика платформы реализована и доступна "
-         "через версионированный API /api/v1. Запуск воспроизводится по README с "
-         "помощью Docker Compose. Подтверждены работа API, сохранение данных и "
-         "архивов, разграничение прав, соблюдение дедлайна и расчёт рейтинга.")
+    text(
+        doc,
+        "Основная серверная бизнес-логика платформы реализована и доступна "
+        "через версионированный API /api/v1. Запуск воспроизводится по README с "
+        "помощью Docker Compose. Подтверждены работа API, сохранение данных и "
+        "архивов, разграничение прав, соблюдение дедлайна и расчёт рейтинга.",
+    )
     heading(doc, "СПИСОК ИСПОЛЬЗОВАННЫХ ИСТОЧНИКОВ")
     for item in (
         "1. Задание 3. Платформа для онлайн-хакатонов и соревнований. URL: https://yusu-source.github.io/GH_pages/03_hackathon.html (дата обращения: 28.09.2026).",
