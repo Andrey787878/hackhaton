@@ -114,6 +114,45 @@ docker compose -p hackhaton-tests -f docker-compose.yml -f compose.test.yml down
 Последняя команда удаляет только тестовые данные. Тесты создают уникальных
 пользователей; не запускайте их с настройками рабочей БД.
 
+
+
+## Качество кода
+
+| Часть | Инструменты | Конфигурация |
+|---|---|---|
+| Backend (Python) | Black, isort, Flake8 | `pyproject.toml`, `.flake8` |
+| Frontend (React + TypeScript) | ESLint, Prettier | `frontend/eslint.config.js`, `frontend/.prettierrc` |
+
+Установка и проверка из корня репозитория:
+
+```bash
+pip install -r requirements-dev.txt
+black --check app tests scripts alembic
+isort --check app tests scripts alembic
+flake8 app tests scripts
+```
+
+В Windows перед isort задайте `export PYTHONUTF8=1` (в файлах есть кириллица).
+
+Фронтенд:
+
+```bash
+cd frontend
+npm ci
+npm run format:check
+npm run lint
+npm test
+```
+
+## Правила разработки
+
+- Ветки: `main` (стабильная), `dev` (интеграция), `backend`, `frontend`, `database/postgresql`; для новых задач `feature/<название>`, `fix/<название>`, `docs/<название>`.
+- Изменения попадают в `main` через Pull Request, перед коммитом запускаются линтеры.
+- Сообщения коммитов: `feat:`, `fix:`, `docs:`, `chore:`.
+
+
+
+
 ## Структура
 
 ```text
@@ -163,6 +202,11 @@ docker-compose.yml      # PostgreSQL, MinIO, миграции, API
 compose.test.yml        # изолированный тестовый сервис и хранилище
 frontend/               # веб-интерфейс: React, TypeScript, Vite, nginx (docs/FRONTEND.md)
 scripts/seed_ui_demo.py # демоданные для показа интерфейса
+pyproject.toml          # настройки Black и isort
+.flake8                 # настройки Flake8
+frontend/eslint.config.js  # настройки ESLint
+frontend/.prettierrc    # настройки Prettier
+
 ```
 
 Поток запроса: маршрут → проверка данных/доступа → сервис → ORM → PostgreSQL.
