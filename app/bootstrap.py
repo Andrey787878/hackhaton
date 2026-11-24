@@ -1,4 +1,5 @@
 """Operator-only CLI: python -m app.bootstrap create-admin / seed-demo."""
+
 import argparse
 import getpass
 import sys
@@ -25,24 +26,42 @@ def provision_user(db: Session, profile: RegisterRequest, role_slug: str) -> tup
     role = db.scalar(select(Role).where(Role.slug == role_slug, Role.deleted_at.is_(None)))
     if role is None:
         raise ValueError("Роль не найдена. Выполните миграции.")
-    existing = list(db.scalars(select(User).where(or_(
-        func.lower(User.username) == profile.username.lower(),
-        func.lower(User.email) == str(profile.email).lower(),
-    ))))
+    existing = list(
+        db.scalars(
+            select(User).where(
+                or_(
+                    func.lower(User.username) == profile.username.lower(),
+                    func.lower(User.email) == str(profile.email).lower(),
+                )
+            )
+        )
+    )
     if existing:
         user = existing[0]
-        assigned = db.scalar(select(UserRole.id).where(
-            UserRole.user_id == user.id, UserRole.role_id == role.id, UserRole.deleted_at.is_(None),
-        ))
-        if (len(existing) == 1 and user.username.lower() == profile.username.lower()
-                and user.email.lower() == str(profile.email).lower() and assigned is not None):
+        assigned = db.scalar(
+            select(UserRole.id).where(
+                UserRole.user_id == user.id,
+                UserRole.role_id == role.id,
+                UserRole.deleted_at.is_(None),
+            )
+        )
+        if (
+            len(existing) == 1
+            and user.username.lower() == profile.username.lower()
+            and user.email.lower() == str(profile.email).lower()
+            and assigned is not None
+        ):
             return user.username, False
-        raise ValueError("Логин/email занят: существующий аккаунт не изменён и не повышен в правах.")
+        raise ValueError(
+            "Логин/email занят: существующий аккаунт не изменён и не повышен в правах."
+        )
 
     user = User(
         username=profile.username,
         email=str(profile.email),
-        password_hash=bcrypt.hashpw(profile.password.encode("utf-8"), bcrypt.gensalt()).decode("ascii"),
+        password_hash=bcrypt.hashpw(profile.password.encode("utf-8"), bcrypt.gensalt()).decode(
+            "ascii"
+        ),
         birthday=profile.birthday,
         display_name=profile.display_name,
     )
@@ -57,8 +76,11 @@ def seed_demo(db: Session, password: str) -> list[tuple[str, bool]]:
     results = []
     for role in ("admin", "organizer", "participant", "expert"):
         profile = RegisterRequest(
-            username=f"demo-{role}", email=f"demo-{role}@example.com",
-            password=password, c_password=password, display_name=f"Demo {role}",
+            username=f"demo-{role}",
+            email=f"demo-{role}@example.com",
+            password=password,
+            c_password=password,
+            display_name=f"Demo {role}",
         )
         results.append(provision_user(db, profile, role))
     return results
@@ -69,7 +91,9 @@ def main() -> None:
     parser.add_argument("command", choices=["create-admin", "seed-demo"])
     parser.add_argument("--username")
     parser.add_argument("--email")
-    parser.add_argument("--password-stdin", action="store_true", help="Читать пароль из stdin без вывода")
+    parser.add_argument(
+        "--password-stdin", action="store_true", help="Читать пароль из stdin без вывода"
+    )
     args = parser.parse_args()
     if args.command == "create-admin" and (not args.username or not args.email):
         parser.error("create-admin требует --username и --email")
@@ -90,8 +114,10 @@ def main() -> None:
                 results = seed_demo(db, password)
             else:
                 profile = RegisterRequest(
-                    username=args.username, email=args.email,
-                    password=password, c_password=password,
+                    username=args.username,
+                    email=args.email,
+                    password=password,
+                    c_password=password,
                 )
                 results = [provision_user(db, profile, "admin")]
     except ValidationError as exc:

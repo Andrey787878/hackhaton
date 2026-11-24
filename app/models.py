@@ -3,7 +3,22 @@ from __future__ import annotations
 from datetime import date, datetime
 from decimal import Decimal
 
-from sqlalchemy import CheckConstraint, Boolean, Numeric, Date, DateTime, ForeignKey, ForeignKeyConstraint, Index, String, Text, UniqueConstraint, and_, func, text
+from sqlalchemy import (
+    Boolean,
+    CheckConstraint,
+    Date,
+    DateTime,
+    ForeignKey,
+    ForeignKeyConstraint,
+    Index,
+    Numeric,
+    String,
+    Text,
+    UniqueConstraint,
+    and_,
+    func,
+    text,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
@@ -12,24 +27,32 @@ from app.db import Base
 class Hackathon(Base):
     __tablename__ = "hackathons"
     id: Mapped[int] = mapped_column(primary_key=True)
-    organizer_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="RESTRICT"), index=True)
+    organizer_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="RESTRICT"), index=True
+    )
     title: Mapped[str] = mapped_column(String(200))
     description: Mapped[str] = mapped_column(Text)
     starts_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     deadline_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     is_published: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
-    cases: Mapped[list[Case]] = relationship(back_populates="hackathon", cascade="all, delete-orphan", order_by="Case.id")
+    cases: Mapped[list[Case]] = relationship(
+        back_populates="hackathon", cascade="all, delete-orphan", order_by="Case.id"
+    )
     __table_args__ = (CheckConstraint("deadline_at > starts_at", name="ck_hackathon_dates"),)
 
 
 class Case(Base):
     __tablename__ = "cases"
     id: Mapped[int] = mapped_column(primary_key=True)
-    hackathon_id: Mapped[int] = mapped_column(ForeignKey("hackathons.id", ondelete="CASCADE"), index=True)
+    hackathon_id: Mapped[int] = mapped_column(
+        ForeignKey("hackathons.id", ondelete="CASCADE"), index=True
+    )
     title: Mapped[str] = mapped_column(String(200))
     description: Mapped[str] = mapped_column(Text)
     hackathon: Mapped[Hackathon] = relationship(back_populates="cases")
-    criteria: Mapped[list[Criterion]] = relationship(back_populates="case", cascade="all, delete-orphan", order_by="Criterion.position")
+    criteria: Mapped[list[Criterion]] = relationship(
+        back_populates="case", cascade="all, delete-orphan", order_by="Criterion.position"
+    )
 
 
 class Criterion(Base):
@@ -44,7 +67,10 @@ class Criterion(Base):
     position: Mapped[int] = mapped_column()
     case: Mapped[Case] = relationship(back_populates="criteria")
     __table_args__ = (
-        CheckConstraint("min_score >= 0 AND max_score > min_score AND max_score <= 1000", name="ck_criterion_scores"),
+        CheckConstraint(
+            "min_score >= 0 AND max_score > min_score AND max_score <= 1000",
+            name="ck_criterion_scores",
+        ),
         CheckConstraint("weight > 0 AND weight <= 1000", name="ck_criterion_weight"),
         CheckConstraint("position >= 0", name="ck_criterion_position"),
         UniqueConstraint("case_id", "position", name="uq_criterion_position"),
@@ -68,13 +94,19 @@ class Submission(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     team_id: Mapped[int] = mapped_column(ForeignKey("teams.id", ondelete="RESTRICT"), index=True)
     case_id: Mapped[int] = mapped_column(ForeignKey("cases.id", ondelete="RESTRICT"), index=True)
-    submitted_by: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="RESTRICT"), index=True)
+    submitted_by: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="RESTRICT"), index=True
+    )
     submitted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     url: Mapped[str | None] = mapped_column(String(2048), nullable=True)
-    stored_object_id: Mapped[int | None] = mapped_column(ForeignKey("stored_objects.id", ondelete="RESTRICT"), nullable=True, unique=True)
+    stored_object_id: Mapped[int | None] = mapped_column(
+        ForeignKey("stored_objects.id", ondelete="RESTRICT"), nullable=True, unique=True
+    )
     stored_object: Mapped[StoredObject | None] = relationship()
     __table_args__ = (
-        CheckConstraint("url IS NOT NULL OR stored_object_id IS NOT NULL", name="ck_submission_content"),
+        CheckConstraint(
+            "url IS NOT NULL OR stored_object_id IS NOT NULL", name="ck_submission_content"
+        ),
         Index("ix_submission_team_case_latest", "team_id", "case_id", "submitted_at", "id"),
     )
 
@@ -82,20 +114,30 @@ class Submission(Base):
 class ExpertAssignment(Base):
     __tablename__ = "expert_assignments"
     id: Mapped[int] = mapped_column(primary_key=True)
-    submission_id: Mapped[int] = mapped_column(ForeignKey("submissions.id", ondelete="RESTRICT"), index=True)
+    submission_id: Mapped[int] = mapped_column(
+        ForeignKey("submissions.id", ondelete="RESTRICT"), index=True
+    )
     expert_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="RESTRICT"), index=True)
     assigned_by: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="RESTRICT"))
-    assigned_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    assigned_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
     submission: Mapped[Submission] = relationship()
-    scores: Mapped[list[Score]] = relationship(back_populates="assignment", cascade="all, delete-orphan")
+    scores: Mapped[list[Score]] = relationship(
+        back_populates="assignment", cascade="all, delete-orphan"
+    )
     __table_args__ = (UniqueConstraint("submission_id", "expert_id", name="uq_expert_assignment"),)
 
 
 class Score(Base):
     __tablename__ = "scores"
     id: Mapped[int] = mapped_column(primary_key=True)
-    assignment_id: Mapped[int] = mapped_column(ForeignKey("expert_assignments.id", ondelete="CASCADE"), index=True)
-    criterion_id: Mapped[int] = mapped_column(ForeignKey("criteria.id", ondelete="RESTRICT"), index=True)
+    assignment_id: Mapped[int] = mapped_column(
+        ForeignKey("expert_assignments.id", ondelete="CASCADE"), index=True
+    )
+    criterion_id: Mapped[int] = mapped_column(
+        ForeignKey("criteria.id", ondelete="RESTRICT"), index=True
+    )
     value: Mapped[int] = mapped_column()
     assignment: Mapped[ExpertAssignment] = relationship(back_populates="scores")
     __table_args__ = (
@@ -121,13 +163,17 @@ class Notification(Base):
 class Team(Base):
     __tablename__ = "teams"
     id: Mapped[int] = mapped_column(primary_key=True)
-    hackathon_id: Mapped[int] = mapped_column(ForeignKey("hackathons.id", ondelete="RESTRICT"), index=True)
+    hackathon_id: Mapped[int] = mapped_column(
+        ForeignKey("hackathons.id", ondelete="RESTRICT"), index=True
+    )
     captain_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="RESTRICT"), index=True)
     name: Mapped[str] = mapped_column(String(100))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     members: Mapped[list[TeamMember]] = relationship(
-        primaryjoin="Team.id == TeamMember.team_id", foreign_keys="TeamMember.team_id",
-        order_by="TeamMember.user_id", cascade="all, delete-orphan",
+        primaryjoin="Team.id == TeamMember.team_id",
+        foreign_keys="TeamMember.team_id",
+        order_by="TeamMember.user_id",
+        cascade="all, delete-orphan",
     )
     __table_args__ = (
         UniqueConstraint("id", "hackathon_id", name="uq_team_hackathon"),
@@ -144,7 +190,12 @@ class TeamMember(Base):
     joined_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     user: Mapped[User] = relationship(foreign_keys=[user_id])
     __table_args__ = (
-        ForeignKeyConstraint(["team_id", "hackathon_id"], ["teams.id", "teams.hackathon_id"], ondelete="CASCADE", name="fk_member_team_hackathon"),
+        ForeignKeyConstraint(
+            ["team_id", "hackathon_id"],
+            ["teams.id", "teams.hackathon_id"],
+            ondelete="CASCADE",
+            name="fk_member_team_hackathon",
+        ),
         UniqueConstraint("hackathon_id", "user_id", name="uq_member_hackathon_user"),
         UniqueConstraint("team_id", "user_id", name="uq_member_team_user"),
     )
@@ -158,7 +209,12 @@ class Invite(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     __table_args__ = (
-        Index("uq_invite_active_team", "team_id", unique=True, postgresql_where=text("revoked_at IS NULL")),
+        Index(
+            "uq_invite_active_team",
+            "team_id",
+            unique=True,
+            postgresql_where=text("revoked_at IS NULL"),
+        ),
     )
 
 
@@ -264,7 +320,9 @@ class Role(Base):
         nullable=True,
         onupdate=func.now(),
     )
-    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
+    deleted_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True, index=True
+    )
     deleted_by: Mapped[int | None] = mapped_column(
         ForeignKey("users.id", ondelete="SET NULL"),
         nullable=True,
@@ -328,7 +386,9 @@ class Permission(Base):
         nullable=True,
         onupdate=func.now(),
     )
-    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
+    deleted_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True, index=True
+    )
     deleted_by: Mapped[int | None] = mapped_column(
         ForeignKey("users.id", ondelete="SET NULL"),
         nullable=True,
@@ -379,16 +439,16 @@ class UserRole(Base):
         nullable=False,
         index=True,
     )
-    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
+    deleted_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True, index=True
+    )
     deleted_by: Mapped[int | None] = mapped_column(
         ForeignKey("users.id", ondelete="SET NULL"),
         nullable=True,
         index=True,
     )
 
-    __table_args__ = (
-        UniqueConstraint("user_id", "role_id", name="uq_role_user_user_id_role_id"),
-    )
+    __table_args__ = (UniqueConstraint("user_id", "role_id", name="uq_role_user_user_id_role_id"),)
 
     user: Mapped[User] = relationship(
         back_populates="user_roles",
@@ -426,7 +486,9 @@ class PermissionRole(Base):
         nullable=False,
         index=True,
     )
-    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
+    deleted_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True, index=True
+    )
     deleted_by: Mapped[int | None] = mapped_column(
         ForeignKey("users.id", ondelete="SET NULL"),
         nullable=True,
@@ -434,7 +496,9 @@ class PermissionRole(Base):
     )
 
     __table_args__ = (
-        UniqueConstraint("role_id", "permission_id", name="uq_permission_role_role_id_permission_id"),
+        UniqueConstraint(
+            "role_id", "permission_id", name="uq_permission_role_role_id_permission_id"
+        ),
     )
 
     role: Mapped[Role] = relationship(

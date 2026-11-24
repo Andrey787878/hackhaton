@@ -33,8 +33,18 @@ class HackathonService:
         return hackathon
 
     def list(self, owner: int | None, limit: int, offset: int):
-        condition = Hackathon.is_published.is_(True) if owner is None else Hackathon.organizer_id == owner
-        return list(self.db.scalars(select(Hackathon).where(condition).order_by(Hackathon.id).limit(limit).offset(offset)))
+        condition = (
+            Hackathon.is_published.is_(True) if owner is None else Hackathon.organizer_id == owner
+        )
+        return list(
+            self.db.scalars(
+                select(Hackathon)
+                .where(condition)
+                .order_by(Hackathon.id)
+                .limit(limit)
+                .offset(offset)
+            )
+        )
 
     def editable(self, hackathon: Hackathon):
         if self.now >= hackathon.starts_at:
@@ -65,12 +75,21 @@ class HackathonService:
         hackathon = self.get(hackathon_id, owner=owner, lock=True)
         if self.now >= hackathon.starts_at:
             raise HackathonError(409, "После старта публикацию менять нельзя.")
-        if published and (not hackathon.cases or any(not case.criteria for case in hackathon.cases)):
+        if published and (
+            not hackathon.cases or any(not case.criteria for case in hackathon.cases)
+        ):
             raise HackathonError(409, "Нужен хотя бы один кейс и критерии для каждого кейса.")
         hackathon.is_published = published
         if published:
-            record(self.db, user_id=owner, actor_id=owner, kind="hackathon_published",
-                   resource_type="hackathon", resource_id=hackathon.id, at=self.now)
+            record(
+                self.db,
+                user_id=owner,
+                actor_id=owner,
+                kind="hackathon_published",
+                resource_type="hackathon",
+                resource_id=hackathon.id,
+                at=self.now,
+            )
         self.db.commit()
         return hackathon
 
@@ -81,7 +100,9 @@ class HackathonService:
         return hackathon.cases
 
     def case(self, hackathon: Hackathon, case_id: int):
-        case = self.db.scalar(select(Case).where(Case.id == case_id, Case.hackathon_id == hackathon.id))
+        case = self.db.scalar(
+            select(Case).where(Case.id == case_id, Case.hackathon_id == hackathon.id)
+        )
         if case is None:
             raise HackathonError(404, "Кейс в этом хакатоне не найден.")
         return case

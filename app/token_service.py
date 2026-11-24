@@ -45,6 +45,7 @@ class RefreshTokenPayload:
 
 class TokenService:
     """Создает и проверяет токены"""
+
     def __init__(self, settings: Settings | None = None) -> None:
         self._settings = settings or get_settings()
 

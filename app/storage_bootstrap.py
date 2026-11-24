@@ -1,4 +1,5 @@
 """Create private MinIO bucket before API startup."""
+
 import time
 
 from botocore.exceptions import BotoCoreError, ClientError

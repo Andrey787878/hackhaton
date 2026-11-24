@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState, type DependencyList } from "react";
-import { ApiError } from "../api/errors";
+import { useCallback, useEffect, useRef, useState, type DependencyList } from 'react';
+import { ApiError } from '../api/errors';
 
 export interface AsyncState<T> {
   data: T | undefined;
@@ -35,7 +35,8 @@ export function useAsync<T>(loader: () => Promise<T>, deps: DependencyList): Asy
         setError(null);
       }
     } catch (err) {
-      if (current === generation.current) setError(err instanceof Error ? err : new Error(String(err)));
+      if (current === generation.current)
+        setError(err instanceof Error ? err : new Error(String(err)));
     } finally {
       if (current === generation.current) setLoading(false);
     }
@@ -53,7 +54,9 @@ export function useAsync<T>(loader: () => Promise<T>, deps: DependencyList): Asy
 
   const setData = useCallback((value: T | ((prev: T | undefined) => T)) => {
     hasData.current = true;
-    setDataState((prev) => (typeof value === "function" ? (value as (p: T | undefined) => T)(prev) : value));
+    setDataState((prev) =>
+      typeof value === 'function' ? (value as (p: T | undefined) => T)(prev) : value,
+    );
   }, []);
 
   return { data, error, loading, reload: run, setData };

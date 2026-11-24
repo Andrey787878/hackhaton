@@ -1,7 +1,7 @@
 // Типы ответов FastAPI (см. app/*_schemas.py и app/dto.py бэкенда).
 // Даты приходят строками ISO 8601 в UTC, Decimal — строками.
 
-export type RoleSlug = "admin" | "organizer" | "participant" | "expert" | string;
+export type RoleSlug = 'admin' | 'organizer' | 'participant' | 'expert' | string;
 
 export interface Role {
   id: number;
@@ -78,7 +78,7 @@ export interface HackathonInput {
   deadline_at: string;
 }
 
-export type Phase = "upcoming" | "active" | "finished";
+export type Phase = 'upcoming' | 'active' | 'finished';
 
 export interface HackathonStatus {
   hackathon: Hackathon;
@@ -171,18 +171,18 @@ export interface HackathonResults {
 }
 
 export type NotificationKind =
-  | "hackathon_published"
-  | "team_joined"
-  | "submission_created"
-  | "expert_assigned"
-  | "score_completed";
+  | 'hackathon_published'
+  | 'team_joined'
+  | 'submission_created'
+  | 'expert_assigned'
+  | 'score_completed';
 
 export interface AppNotification {
   id: number;
   kind: NotificationKind;
   title: string;
   actor_id: number;
-  resource_type: "hackathon" | "team" | "submission" | "assignment";
+  resource_type: 'hackathon' | 'team' | 'submission' | 'assignment';
   resource_id: number;
   created_at: string;
   read_at: string | null;

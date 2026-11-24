@@ -7,13 +7,13 @@ Create Date: 2026-04-09 21:20:00
 
 from __future__ import annotations
 
-from typing import Any
 import secrets
-import bcrypt
+from typing import Any
 
-from alembic import op
+import bcrypt
 import sqlalchemy as sa
 
+from alembic import op
 
 revision = "20260409_0002"
 down_revision = "20260409_0001"
@@ -28,30 +28,30 @@ SEED_USER_USERNAME = "Systemrbac"
 SEED_USER_EMAIL = "system.rbac@local.invalid"
 SEED_USER_BIRTHDAY = "2000-01-01"
 SEED_PERMISSION_SLUGS = tuple(
-    f"{action}-{entity}"
-    for entity in ENTITY_SLUGS
-    for action in ACTION_SLUGS
+    f"{action}-{entity}" for entity in ENTITY_SLUGS for action in ACTION_SLUGS
 )
 
 
 def _resolve_seed_user_id(connection: sa.Connection) -> int:
     """Возвращает id пользователя для заполнения created_by в сидах."""
-    existing_user_id = connection.execute(sa.text("SELECT id FROM users ORDER BY id LIMIT 1")).scalar()
+    existing_user_id = connection.execute(
+        sa.text("SELECT id FROM users ORDER BY id LIMIT 1")
+    ).scalar()
     if existing_user_id is not None:
         return int(existing_user_id)
 
     inserted_user_id = connection.execute(
-        sa.text(
-            """
+        sa.text("""
             INSERT INTO users (username, email, password_hash, birthday)
             VALUES (:username, :email, :password_hash, :birthday)
             RETURNING id
-            """
-        ),
+            """),
         {
             "username": SEED_USER_USERNAME,
             "email": SEED_USER_EMAIL,
-            "password_hash": bcrypt.hashpw(secrets.token_bytes(32), bcrypt.gensalt()).decode("ascii"),
+            "password_hash": bcrypt.hashpw(secrets.token_bytes(32), bcrypt.gensalt()).decode(
+                "ascii"
+            ),
             "birthday": SEED_USER_BIRTHDAY,
         },
     ).scalar_one()
@@ -105,8 +105,18 @@ def upgrade() -> None:
     connection.execute(
         sa.insert(role_table),
         [
-            {"name": "Admin", "slug": "admin", "description": "Администратор", "created_by": seed_user_id},
-            {"name": "User", "slug": "user", "description": "Пользователь", "created_by": seed_user_id},
+            {
+                "name": "Admin",
+                "slug": "admin",
+                "description": "Администратор",
+                "created_by": seed_user_id,
+            },
+            {
+                "name": "User",
+                "slug": "user",
+                "description": "Пользователь",
+                "created_by": seed_user_id,
+            },
             {"name": "Guest", "slug": "guest", "description": "Гость", "created_by": seed_user_id},
         ],
     )
@@ -162,12 +172,10 @@ def downgrade() -> None:
     connection = op.get_bind()
 
     connection.execute(
-        sa.text(
-            """
+        sa.text("""
             DELETE FROM permission_role
             WHERE role_id IN (SELECT id FROM roles WHERE slug = ANY(:role_slugs))
-            """
-        ),
+            """),
         {"role_slugs": list(ROLE_SLUGS)},
     )
 
@@ -185,8 +193,7 @@ def downgrade() -> None:
     # Удаляем fallback-пользователя только если он точно совпадает с seed-профилем
     # и не используется другими сущностями.
     connection.execute(
-        sa.text(
-            """
+        sa.text("""
             DELETE FROM users
             WHERE username = :username
               AND email = :email
@@ -216,8 +223,7 @@ def downgrade() -> None:
                     WHERE p.created_by = users.id
                        OR p.deleted_by = users.id
               )
-            """
-        ),
+            """),
         {
             "username": SEED_USER_USERNAME,
             "email": SEED_USER_EMAIL,

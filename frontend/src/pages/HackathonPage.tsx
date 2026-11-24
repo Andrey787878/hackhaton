@@ -1,20 +1,20 @@
-import { useCallback, useState, type FormEvent } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { messageOf } from "../api/errors";
-import { publicApi } from "../api/hackathons";
-import { teamsApi } from "../api/teams";
-import type { Phase } from "../api/types";
-import { useAuth } from "../auth/AuthContext";
-import { PhaseBadge } from "../components/Badges";
-import { Countdown, phaseAt } from "../components/Countdown";
-import { CriteriaTable } from "../components/CriteriaTable";
-import { Alert, EmptyState, ErrorBox, Loader } from "../components/Feedback";
-import { Icon } from "../components/Icon";
-import { useAsync } from "../hooks/useAsync";
-import { useServerNow } from "../hooks/useServerNow";
-import { formatDate, formatUtc } from "../utils/format";
-import { hasRole } from "../utils/roles";
-import { applyServerTime } from "../utils/serverClock";
+import { useCallback, useState, type FormEvent } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { messageOf } from '../api/errors';
+import { publicApi } from '../api/hackathons';
+import { teamsApi } from '../api/teams';
+import type { Phase } from '../api/types';
+import { useAuth } from '../auth/AuthContext';
+import { PhaseBadge } from '../components/Badges';
+import { Countdown, phaseAt } from '../components/Countdown';
+import { CriteriaTable } from '../components/CriteriaTable';
+import { Alert, EmptyState, ErrorBox, Loader } from '../components/Feedback';
+import { Icon } from '../components/Icon';
+import { useAsync } from '../hooks/useAsync';
+import { useServerNow } from '../hooks/useServerNow';
+import { formatDate, formatUtc } from '../utils/format';
+import { hasRole } from '../utils/roles';
+import { applyServerTime } from '../utils/serverClock';
 
 export function HackathonPage() {
   const id = Number(useParams().id);
@@ -27,7 +27,9 @@ export function HackathonPage() {
   const now = useServerNow();
 
   const hackathon = status.data?.hackathon;
-  const phase: Phase | undefined = hackathon ? phaseAt(now, hackathon.starts_at, hackathon.deadline_at) : undefined;
+  const phase: Phase | undefined = hackathon
+    ? phaseAt(now, hackathon.starts_at, hackathon.deadline_at)
+    : undefined;
   const onPhaseChange = useCallback(() => void status.reload(), [status.reload]);
 
   if (status.error) {
@@ -83,11 +85,18 @@ export function HackathonPage() {
 
         <aside className="detail-side">
           <div className="card">
-            <Countdown startsAt={hackathon.starts_at} deadlineAt={hackathon.deadline_at} onPhaseChange={onPhaseChange} />
+            <Countdown
+              startsAt={hackathon.starts_at}
+              deadlineAt={hackathon.deadline_at}
+              onPhaseChange={onPhaseChange}
+            />
           </div>
           <TeamPanel hackathonId={hackathon.id} phase={phase} />
-          {phase === "finished" && (
-            <Link to={`/hackathons/${hackathon.id}/leaderboard`} className="btn btn-primary btn-block">
+          {phase === 'finished' && (
+            <Link
+              to={`/hackathons/${hackathon.id}/leaderboard`}
+              className="btn btn-primary btn-block"
+            >
               <Icon name="trophy" size={16} /> Открыть рейтинг
             </Link>
           )}
@@ -99,26 +108,26 @@ export function HackathonPage() {
 
 function CasesSection({ hackathonId, phase }: { hackathonId: number; phase: Phase }) {
   const cases = useAsync(
-    () => (phase === "active" ? publicApi.cases(hackathonId) : Promise.resolve(null)),
+    () => (phase === 'active' ? publicApi.cases(hackathonId) : Promise.resolve(null)),
     [hackathonId, phase],
   );
   const results = useAsync(
-    () => (phase === "finished" ? publicApi.results(hackathonId) : Promise.resolve(null)),
+    () => (phase === 'finished' ? publicApi.results(hackathonId) : Promise.resolve(null)),
     [hackathonId, phase],
   );
 
-  if (phase === "upcoming") {
+  if (phase === 'upcoming') {
     return (
       <div className="card">
         <EmptyState icon="lock" title="Кейсы откроются в момент старта">
-          Материалы доступны только в период проведения — это проверяет сервер, а не браузер. Пока можно собрать
-          команду.
+          Материалы доступны только в период проведения — это проверяет сервер, а не браузер. Пока
+          можно собрать команду.
         </EmptyState>
       </div>
     );
   }
 
-  if (phase === "finished") {
+  if (phase === 'finished') {
     return (
       <section className="stack">
         <h2 className="section-title">
@@ -130,12 +139,17 @@ function CasesSection({ hackathonId, phase }: { hackathonId: number; phase: Phas
           <div className="card" key={item.case_id}>
             <div className="row between wrap gap">
               <h3>{item.title}</h3>
-              <Link className="btn btn-sm btn-ghost" to={`/hackathons/${hackathonId}/leaderboard?case=${item.case_id}`}>
+              <Link
+                className="btn btn-sm btn-ghost"
+                to={`/hackathons/${hackathonId}/leaderboard?case=${item.case_id}`}
+              >
                 Полный рейтинг <Icon name="chevron" size={14} />
               </Link>
             </div>
             {item.entries.length === 0 ? (
-              <p className="muted small">Оценок пока нет — рейтинг появится после полной оценки экспертом.</p>
+              <p className="muted small">
+                Оценок пока нет — рейтинг появится после полной оценки экспертом.
+              </p>
             ) : (
               <ol className="podium">
                 {item.entries.slice(0, 3).map((entry) => (
@@ -175,9 +189,12 @@ function CasesSection({ hackathonId, phase }: { hackathonId: number; phase: Phas
 function TeamPanel({ hackathonId, phase }: { hackathonId: number; phase: Phase }) {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const canTeam = hasRole(user, "participant");
-  const teams = useAsync(() => (canTeam ? teamsApi.mine() : Promise.resolve([])), [canTeam, user?.id]);
-  const [name, setName] = useState("");
+  const canTeam = hasRole(user, 'participant');
+  const teams = useAsync(
+    () => (canTeam ? teamsApi.mine() : Promise.resolve([])),
+    [canTeam, user?.id],
+  );
+  const [name, setName] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -201,15 +218,17 @@ function TeamPanel({ hackathonId, phase }: { hackathonId: number; phase: Phase }
         <span className="eyebrow">Ваша команда</span>
         <h3>{mine.name}</h3>
         <p className="muted small">
-          {mine.members.length} участ. · {mine.captain_id === user.id ? "вы капитан" : "вы участник"}
+          {mine.members.length} участ. ·{' '}
+          {mine.captain_id === user.id ? 'вы капитан' : 'вы участник'}
         </p>
         <Link to={`/teams/${mine.id}`} className="btn btn-primary btn-block">
-          <Icon name="users" size={16} /> {phase === "active" ? "Команда и сдача решения" : "Открыть команду"}
+          <Icon name="users" size={16} />{' '}
+          {phase === 'active' ? 'Команда и сдача решения' : 'Открыть команду'}
         </Link>
       </div>
     );
   }
-  if (phase === "finished") return null;
+  if (phase === 'finished') return null;
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -232,11 +251,17 @@ function TeamPanel({ hackathonId, phase }: { hackathonId: number; phase: Phase }
       <form className="form" onSubmit={submit}>
         <label className="field">
           <span>Название команды</span>
-          <input value={name} onChange={(e) => setName(e.target.value)} maxLength={100} required placeholder="Например, Blue Shift" />
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            maxLength={100}
+            required
+            placeholder="Например, Blue Shift"
+          />
         </label>
         {error && <Alert tone="error">{error}</Alert>}
         <button className="btn btn-primary btn-block" disabled={busy || !name.trim()}>
-          <Icon name="plus" size={16} /> {busy ? "Создаём…" : "Создать"}
+          <Icon name="plus" size={16} /> {busy ? 'Создаём…' : 'Создать'}
         </button>
       </form>
       <div className="divider">или</div>

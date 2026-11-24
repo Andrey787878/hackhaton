@@ -1,42 +1,45 @@
 // Форматирование дат, размеров и обратный отсчёт. Чистые функции — покрыты тестами.
 
-const dateTime = new Intl.DateTimeFormat("ru-RU", {
-  day: "2-digit",
-  month: "short",
-  year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
+const dateTime = new Intl.DateTimeFormat('ru-RU', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
 });
 
-const dateTimeSeconds = new Intl.DateTimeFormat("ru-RU", {
-  day: "2-digit",
-  month: "2-digit",
-  year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-  second: "2-digit",
+const dateTimeSeconds = new Intl.DateTimeFormat('ru-RU', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
 });
 
 export function formatDate(iso: string | null | undefined): string {
-  if (!iso) return "—";
+  if (!iso) return '—';
   const date = new Date(iso);
-  return Number.isNaN(date.getTime()) ? "—" : dateTime.format(date);
+  return Number.isNaN(date.getTime()) ? '—' : dateTime.format(date);
 }
 
 export function formatDateSeconds(iso: string | null | undefined): string {
-  if (!iso) return "—";
+  if (!iso) return '—';
   const date = new Date(iso);
-  return Number.isNaN(date.getTime()) ? "—" : dateTimeSeconds.format(date);
+  return Number.isNaN(date.getTime()) ? '—' : dateTimeSeconds.format(date);
 }
 
 export function formatUtc(iso: string): string {
-  return new Date(iso).toISOString().replace("T", " ").replace(/\.\d+Z$/, " UTC");
+  return new Date(iso)
+    .toISOString()
+    .replace('T', ' ')
+    .replace(/\.\d+Z$/, ' UTC');
 }
 
 export function formatBytes(bytes: number): string {
-  if (!Number.isFinite(bytes) || bytes < 0) return "—";
+  if (!Number.isFinite(bytes) || bytes < 0) return '—';
   if (bytes < 1024) return `${bytes} Б`;
-  const units = ["КиБ", "МиБ", "ГиБ"];
+  const units = ['КиБ', 'МиБ', 'ГиБ'];
   let value = bytes / 1024;
   let unit = 0;
   while (value >= 1024 && unit < units.length - 1) {
@@ -66,13 +69,13 @@ export function splitDuration(ms: number): DurationParts {
   };
 }
 
-export const pad2 = (value: number) => String(value).padStart(2, "0");
+export const pad2 = (value: number) => String(value).padStart(2, '0');
 
 /** Значение для <input type="datetime-local"> в часовом поясе браузера. */
 export function toLocalInput(iso: string | null | undefined): string {
-  if (!iso) return "";
+  if (!iso) return '';
   const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return "";
+  if (Number.isNaN(date.getTime())) return '';
   return (
     `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}` +
     `T${pad2(date.getHours())}:${pad2(date.getMinutes())}`
@@ -82,7 +85,7 @@ export function toLocalInput(iso: string | null | undefined): string {
 /** Локальное значение datetime-local → ISO 8601 в UTC (API требует aware datetime). */
 export function fromLocalInput(value: string): string {
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) throw new Error("Некорректная дата.");
+  if (Number.isNaN(date.getTime())) throw new Error('Некорректная дата.');
   return date.toISOString();
 }
 
@@ -95,7 +98,10 @@ export function plural(count: number, one: string, few: string, many: string): s
 }
 
 export function initials(name: string): string {
-  const parts = name.trim().split(/[\s_-]+/).filter(Boolean);
+  const parts = name
+    .trim()
+    .split(/[\s_-]+/)
+    .filter(Boolean);
   const letters = parts.length > 1 ? parts[0][0] + parts[1][0] : name.slice(0, 2);
   return letters.toUpperCase();
 }

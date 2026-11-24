@@ -1,19 +1,19 @@
-import { useState, type FormEvent } from "react";
-import { Link, useParams } from "react-router-dom";
-import { messageOf } from "../api/errors";
-import { organizerApi } from "../api/hackathons";
-import { assignmentsApi } from "../api/scoring";
-import { submissionsApi, teamsApi } from "../api/teams";
-import type { Assignment, Case, CriterionInput, Hackathon, Phase, Team } from "../api/types";
-import { PhaseBadge } from "../components/Badges";
-import { Countdown, phaseAt } from "../components/Countdown";
-import { CriteriaTable } from "../components/CriteriaTable";
-import { Alert, EmptyState, ErrorBox, Loader } from "../components/Feedback";
-import { Icon } from "../components/Icon";
-import { useAsync, type AsyncState } from "../hooks/useAsync";
-import { useServerNow } from "../hooks/useServerNow";
-import { formatDate, formatDateSeconds, toLocalInput } from "../utils/format";
-import { HackathonForm } from "./OrganizerPage";
+import { useState, type FormEvent } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { messageOf } from '../api/errors';
+import { organizerApi } from '../api/hackathons';
+import { assignmentsApi } from '../api/scoring';
+import { submissionsApi, teamsApi } from '../api/teams';
+import type { Assignment, Case, CriterionInput, Hackathon, Phase, Team } from '../api/types';
+import { PhaseBadge } from '../components/Badges';
+import { Countdown, phaseAt } from '../components/Countdown';
+import { CriteriaTable } from '../components/CriteriaTable';
+import { Alert, EmptyState, ErrorBox, Loader } from '../components/Feedback';
+import { Icon } from '../components/Icon';
+import { useAsync, type AsyncState } from '../hooks/useAsync';
+import { useServerNow } from '../hooks/useServerNow';
+import { formatDate, formatDateSeconds, toLocalInput } from '../utils/format';
+import { HackathonForm } from './OrganizerPage';
 
 export function OrganizerHackathonPage() {
   const id = Number(useParams().id);
@@ -38,15 +38,18 @@ export function OrganizerHackathonPage() {
   if (!item) return <Loader />;
 
   const phase = phaseAt(now, item.starts_at, item.deadline_at);
-  const editable = phase === "upcoming" && !item.is_published;
-  const canToggle = phase === "upcoming";
-  const ready = (cases.data ?? []).length > 0 && (cases.data ?? []).every((c) => c.criteria.length > 0);
+  const editable = phase === 'upcoming' && !item.is_published;
+  const canToggle = phase === 'upcoming';
+  const ready =
+    (cases.data ?? []).length > 0 && (cases.data ?? []).every((c) => c.criteria.length > 0);
 
   const toggle = async () => {
     setBusy(true);
     setError(null);
     try {
-      hackathon.setData(item.is_published ? await organizerApi.unpublish(id) : await organizerApi.publish(id));
+      hackathon.setData(
+        item.is_published ? await organizerApi.unpublish(id) : await organizerApi.publish(id),
+      );
     } catch (err) {
       setError(messageOf(err));
     } finally {
@@ -64,7 +67,11 @@ export function OrganizerHackathonPage() {
           <div className="card">
             <div className="row between wrap gap">
               <div className="row gap wrap">
-                {item.is_published ? <PhaseBadge phase={phase} /> : <span className="badge badge-draft">черновик</span>}
+                {item.is_published ? (
+                  <PhaseBadge phase={phase} />
+                ) : (
+                  <span className="badge badge-draft">черновик</span>
+                )}
                 <span className="muted small">#{item.id}</span>
               </div>
               <div className="row gap wrap">
@@ -74,7 +81,11 @@ export function OrganizerHackathonPage() {
                   </Link>
                 )}
                 {editable && !editing && (
-                  <button type="button" className="btn btn-sm btn-ghost" onClick={() => setEditing(true)}>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-ghost"
+                    onClick={() => setEditing(true)}
+                  >
                     <Icon name="edit" size={14} /> Изменить
                   </button>
                 )}
@@ -99,15 +110,17 @@ export function OrganizerHackathonPage() {
                 <h1>{item.title}</h1>
                 <p className="pre-line muted">{item.description}</p>
                 <p className="small">
-                  <Icon name="calendar" size={14} /> {formatDate(item.starts_at)} — <Icon name="clock" size={14} />{" "}
-                  {formatDate(item.deadline_at)}
+                  <Icon name="calendar" size={14} /> {formatDate(item.starts_at)} —{' '}
+                  <Icon name="clock" size={14} /> {formatDate(item.deadline_at)}
                 </p>
               </>
             )}
           </div>
 
           <CasesEditor hackathonId={id} editable={editable} cases={cases} />
-          {item.is_published && <TeamsSection hackathon={item} phase={phase} cases={cases.data ?? []} />}
+          {item.is_published && (
+            <TeamsSection hackathon={item} phase={phase} cases={cases.data ?? []} />
+          )}
         </div>
 
         <aside className="detail-side">
@@ -121,9 +134,9 @@ export function OrganizerHackathonPage() {
             {!item.is_published ? (
               <>
                 <ul className="checklist">
-                  <li className={(cases.data ?? []).length > 0 ? "ok" : ""}>Хотя бы один кейс</li>
-                  <li className={ready ? "ok" : ""}>Критерии у каждого кейса</li>
-                  <li className={phase === "upcoming" ? "ok" : ""}>Хакатон ещё не начался</li>
+                  <li className={(cases.data ?? []).length > 0 ? 'ok' : ''}>Хотя бы один кейс</li>
+                  <li className={ready ? 'ok' : ''}>Критерии у каждого кейса</li>
+                  <li className={phase === 'upcoming' ? 'ok' : ''}>Хакатон ещё не начался</li>
                 </ul>
                 <button
                   type="button"
@@ -137,10 +150,18 @@ export function OrganizerHackathonPage() {
             ) : (
               <>
                 <p className="muted small">
-                  Хакатон виден всем. {canToggle ? "Чтобы изменить кейсы, снимите его с публикации." : "После старта публикацию не меняют."}
+                  Хакатон виден всем.{' '}
+                  {canToggle
+                    ? 'Чтобы изменить кейсы, снимите его с публикации.'
+                    : 'После старта публикацию не меняют.'}
                 </p>
                 {canToggle && (
-                  <button type="button" className="btn btn-ghost btn-block" onClick={toggle} disabled={busy}>
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-block"
+                    onClick={toggle}
+                    disabled={busy}
+                  >
                     Снять с публикации
                   </button>
                 )}
@@ -148,7 +169,7 @@ export function OrganizerHackathonPage() {
             )}
             {error && <Alert tone="error">{error}</Alert>}
           </div>
-          {phase === "finished" && item.is_published && (
+          {phase === 'finished' && item.is_published && (
             <Link to={`/hackathons/${item.id}/leaderboard`} className="btn btn-danger btn-block">
               <Icon name="trophy" size={16} /> Рейтинг
             </Link>
@@ -170,8 +191,8 @@ function CasesEditor({
   editable: boolean;
   cases: AsyncState<Case[]>;
 }) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -180,10 +201,13 @@ function CasesEditor({
     setBusy(true);
     setError(null);
     try {
-      const created = await organizerApi.createCase(hackathonId, { title: title.trim(), description: description.trim() });
+      const created = await organizerApi.createCase(hackathonId, {
+        title: title.trim(),
+        description: description.trim(),
+      });
       cases.setData((prev) => [...(prev ?? []), created]);
-      setTitle("");
-      setDescription("");
+      setTitle('');
+      setDescription('');
     } catch (err) {
       setError(messageOf(err));
     } finally {
@@ -215,7 +239,9 @@ function CasesEditor({
           hackathonId={hackathonId}
           item={item}
           editable={editable}
-          onChange={(next) => cases.setData((prev) => (prev ?? []).map((c) => (c.id === next.id ? next : c)))}
+          onChange={(next) =>
+            cases.setData((prev) => (prev ?? []).map((c) => (c.id === next.id ? next : c)))
+          }
           onRemove={() => cases.setData((prev) => (prev ?? []).filter((c) => c.id !== item.id))}
         />
       ))}
@@ -226,14 +252,27 @@ function CasesEditor({
           </h3>
           <label className="field">
             <span>Название кейса</span>
-            <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={200} required />
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              maxLength={200}
+              required
+            />
           </label>
           <label className="field">
             <span>Описание задачи</span>
-            <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} required />
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={3}
+              required
+            />
           </label>
           {error && <Alert tone="error">{error}</Alert>}
-          <button className="btn btn-primary" disabled={busy || !title.trim() || !description.trim()}>
+          <button
+            className="btn btn-primary"
+            disabled={busy || !title.trim() || !description.trim()}
+          >
             Добавить кейс
           </button>
         </form>
@@ -242,7 +281,13 @@ function CasesEditor({
   );
 }
 
-const blankCriterion = (): CriterionInput => ({ title: "", description: "", min_score: 0, max_score: 10, weight: "1" });
+const blankCriterion = (): CriterionInput => ({
+  title: '',
+  description: '',
+  min_score: 0,
+  max_score: 10,
+  weight: '1',
+});
 
 function CaseCard({
   hackathonId,
@@ -257,7 +302,7 @@ function CaseCard({
   onChange: (next: Case) => void;
   onRemove: () => void;
 }) {
-  const [mode, setMode] = useState<"view" | "case" | "criteria">("view");
+  const [mode, setMode] = useState<'view' | 'case' | 'criteria'>('view');
   const [title, setTitle] = useState(item.title);
   const [description, setDescription] = useState(item.description);
   const [rows, setRows] = useState<CriterionInput[]>([]);
@@ -288,7 +333,7 @@ function CaseCard({
           }))
         : [blankCriterion()],
     );
-    setMode("criteria");
+    setMode('criteria');
   };
 
   const updateRow = (index: number, patch: Partial<CriterionInput>) =>
@@ -296,20 +341,20 @@ function CaseCard({
 
   const rowError = (row: CriterionInput) =>
     !row.title.trim()
-      ? "нужно название"
+      ? 'нужно название'
       : row.max_score <= row.min_score
-        ? "max должен быть больше min"
+        ? 'max должен быть больше min'
         : !(Number(row.weight) > 0)
-          ? "вес > 0"
+          ? 'вес > 0'
           : null;
 
   return (
     <article className="card case-card">
       <div className="row between wrap gap">
         <div className="case-index">Кейс #{item.id}</div>
-        {editable && mode === "view" && (
+        {editable && mode === 'view' && (
           <div className="row gap wrap">
-            <button type="button" className="btn btn-sm btn-ghost" onClick={() => setMode("case")}>
+            <button type="button" className="btn btn-sm btn-ghost" onClick={() => setMode('case')}>
               <Icon name="edit" size={14} /> Текст
             </button>
             <button type="button" className="btn btn-sm btn-ghost" onClick={openCriteria}>
@@ -333,30 +378,45 @@ function CaseCard({
         )}
       </div>
 
-      {mode === "case" ? (
+      {mode === 'case' ? (
         <form
           className="form"
           onSubmit={(event) => {
             event.preventDefault();
             void run(async () => {
-              onChange(await organizerApi.updateCase(hackathonId, item.id, { title: title.trim(), description: description.trim() }));
-              setMode("view");
+              onChange(
+                await organizerApi.updateCase(hackathonId, item.id, {
+                  title: title.trim(),
+                  description: description.trim(),
+                }),
+              );
+              setMode('view');
             });
           }}
         >
           <label className="field">
             <span>Название</span>
-            <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={200} required />
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              maxLength={200}
+              required
+            />
           </label>
           <label className="field">
             <span>Описание</span>
-            <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} required />
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={3}
+              required
+            />
           </label>
           <div className="row gap">
             <button className="btn btn-primary btn-sm" disabled={busy}>
               Сохранить
             </button>
-            <button type="button" className="btn btn-ghost btn-sm" onClick={() => setMode("view")}>
+            <button type="button" className="btn btn-ghost btn-sm" onClick={() => setMode('view')}>
               Отмена
             </button>
           </div>
@@ -368,13 +428,13 @@ function CaseCard({
         </>
       )}
 
-      {mode === "criteria" ? (
+      {mode === 'criteria' ? (
         <form
           className="form"
           onSubmit={(event) => {
             event.preventDefault();
             if (rows.some(rowError)) {
-              setError("Исправьте строки критериев.");
+              setError('Исправьте строки критериев.');
               return;
             }
             void run(async () => {
@@ -382,10 +442,14 @@ function CaseCard({
                 await organizerApi.setCriteria(
                   hackathonId,
                   item.id,
-                  rows.map((row) => ({ ...row, title: row.title.trim(), description: row.description.trim() })),
+                  rows.map((row) => ({
+                    ...row,
+                    title: row.title.trim(),
+                    description: row.description.trim(),
+                  })),
                 ),
               );
-              setMode("view");
+              setMode('view');
             });
           }}
         >
@@ -398,7 +462,7 @@ function CaseCard({
               <span />
             </div>
             {rows.map((row, index) => (
-              <div className={rowError(row) ? "criteria-row invalid" : "criteria-row"} key={index}>
+              <div className={rowError(row) ? 'criteria-row invalid' : 'criteria-row'} key={index}>
                 <input
                   placeholder="Название"
                   value={row.title}
@@ -458,7 +522,7 @@ function CaseCard({
               <Icon name="plus" size={14} /> Строка
             </button>
             <div className="grow" />
-            <button type="button" className="btn btn-ghost btn-sm" onClick={() => setMode("view")}>
+            <button type="button" className="btn btn-ghost btn-sm" onClick={() => setMode('view')}>
               Отмена
             </button>
             <button className="btn btn-primary btn-sm" disabled={busy}>
@@ -476,7 +540,15 @@ function CaseCard({
 
 // ---------- команды, сдачи и эксперты ----------
 
-function TeamsSection({ hackathon, phase, cases }: { hackathon: Hackathon; phase: Phase; cases: Case[] }) {
+function TeamsSection({
+  hackathon,
+  phase,
+  cases,
+}: {
+  hackathon: Hackathon;
+  phase: Phase;
+  cases: Case[];
+}) {
   const teams = useAsync(() => teamsApi.byHackathon(hackathon.id), [hackathon.id]);
   const assignments = useAsync(() => assignmentsApi.list(hackathon.id), [hackathon.id]);
 
@@ -484,7 +556,7 @@ function TeamsSection({ hackathon, phase, cases }: { hackathon: Hackathon; phase
     <section className="stack">
       <div className="row between wrap gap">
         <h2 className="section-title">
-          <Icon name="users" /> Команды · {teams.data?.length ?? "…"}
+          <Icon name="users" /> Команды · {teams.data?.length ?? '…'}
         </h2>
         <button type="button" className="btn btn-sm btn-ghost" onClick={() => void teams.reload()}>
           <Icon name="refresh" size={14} /> Обновить
@@ -502,7 +574,7 @@ function TeamsSection({ hackathon, phase, cases }: { hackathon: Hackathon; phase
         <TeamRow key={team.id} team={team} cases={cases} />
       ))}
 
-      {phase === "finished" ? (
+      {phase === 'finished' ? (
         <AssignPanel
           hackathonId={hackathon.id}
           teams={teams.data ?? []}
@@ -527,29 +599,40 @@ function TeamRow({ team, cases }: { team: Team; cases: Case[] }) {
   const title = (caseId: number) => cases.find((c) => c.id === caseId)?.title ?? `кейс #${caseId}`;
   return (
     <div className="card">
-      <button type="button" className="row-button" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
+      <button
+        type="button"
+        className="row-button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+      >
         <span className="team-avatar">{team.name.slice(0, 1).toUpperCase()}</span>
         <span className="grow">
           <span className="strong">{team.name}</span>
-          <span className="muted small"> #{team.id} · {team.members.map((m) => m.username).join(", ")}</span>
+          <span className="muted small">
+            {' '}
+            #{team.id} · {team.members.map((m) => m.username).join(', ')}
+          </span>
         </span>
-        <Icon name="chevron" className={open ? "rotate" : ""} />
+        <Icon name="chevron" className={open ? 'rotate' : ''} />
       </button>
       {open && (
         <div className="row-details">
           <ErrorBox error={submissions.error} onRetry={submissions.reload} />
           {submissions.loading && <Loader inline />}
-          {submissions.data?.length === 0 && <p className="muted small">Команда ещё не сдала решение.</p>}
+          {submissions.data?.length === 0 && (
+            <p className="muted small">Команда ещё не сдала решение.</p>
+          )}
           <ul className="timeline compact">
             {submissions.data?.map((item) => (
               <li key={item.id}>
                 <span className="timeline-dot" aria-hidden />
                 <span className="grow small">
-                  <span className="strong">{title(item.case_id)}</span> · {formatDateSeconds(item.submitted_at)}
+                  <span className="strong">{title(item.case_id)}</span> ·{' '}
+                  {formatDateSeconds(item.submitted_at)}
                   {item.url && (
                     <>
-                      {" "}
-                      ·{" "}
+                      {' '}
+                      ·{' '}
                       <a href={item.url} target="_blank" rel="noreferrer noopener">
                         ссылка
                       </a>
@@ -557,7 +640,11 @@ function TeamRow({ team, cases }: { team: Team; cases: Case[] }) {
                   )}
                 </span>
                 {item.archive && (
-                  <button type="button" className="btn btn-sm btn-ghost" onClick={() => void submissionsApi.downloadArchive(item)}>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-ghost"
+                    onClick={() => void submissionsApi.downloadArchive(item)}
+                  >
                     <Icon name="download" size={14} />
                   </button>
                 )}
@@ -581,14 +668,14 @@ function AssignPanel({
   cases: Case[];
   assignments: AsyncState<Assignment[]>;
 }) {
-  const [teamId, setTeamId] = useState<number | "">("");
-  const [caseId, setCaseId] = useState<number | "">("");
-  const [expertId, setExpertId] = useState("");
+  const [teamId, setTeamId] = useState<number | ''>('');
+  const [caseId, setCaseId] = useState<number | ''>('');
+  const [expertId, setExpertId] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const team = teamId === "" ? teams[0]?.id : teamId;
-  const kase = caseId === "" ? cases[0]?.id : caseId;
+  const team = teamId === '' ? teams[0]?.id : teamId;
+  const kase = caseId === '' ? cases[0]?.id : caseId;
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -597,10 +684,14 @@ function AssignPanel({
     setError(null);
     setDone(null);
     try {
-      const created = await assignmentsApi.assign(hackathonId, { team_id: team, case_id: kase, expert_id: Number(expertId) });
+      const created = await assignmentsApi.assign(hackathonId, {
+        team_id: team,
+        case_id: kase,
+        expert_id: Number(expertId),
+      });
       assignments.setData((prev) => [...(prev ?? []), created]);
       setDone(`Эксперт #${created.expert_id} назначен на решение #${created.submission.id}.`);
-      setExpertId("");
+      setExpertId('');
     } catch (err) {
       setError(messageOf(err));
     } finally {
@@ -619,7 +710,7 @@ function AssignPanel({
         <div className="form-row three">
           <label className="field">
             <span>Команда</span>
-            <select value={team ?? ""} onChange={(e) => setTeamId(Number(e.target.value))}>
+            <select value={team ?? ''} onChange={(e) => setTeamId(Number(e.target.value))}>
               {teams.map((t) => (
                 <option key={t.id} value={t.id}>
                   {t.name}
@@ -629,7 +720,7 @@ function AssignPanel({
           </label>
           <label className="field">
             <span>Кейс</span>
-            <select value={kase ?? ""} onChange={(e) => setCaseId(Number(e.target.value))}>
+            <select value={kase ?? ''} onChange={(e) => setCaseId(Number(e.target.value))}>
               {cases.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.title}

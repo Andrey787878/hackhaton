@@ -6,7 +6,7 @@ export interface Tokens {
   refresh: string;
 }
 
-const KEY = "hackpulse.tokens";
+const KEY = 'hackpulse.tokens';
 type Listener = (tokens: Tokens | null) => void;
 const listeners = new Set<Listener>();
 
@@ -15,13 +15,15 @@ function read(): Tokens | null {
     const raw = localStorage.getItem(KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as Partial<Tokens>;
-    return parsed.access && parsed.refresh ? { access: parsed.access, refresh: parsed.refresh } : null;
+    return parsed.access && parsed.refresh
+      ? { access: parsed.access, refresh: parsed.refresh }
+      : null;
   } catch {
     return null;
   }
 }
 
-let current: Tokens | null = typeof localStorage === "undefined" ? null : read();
+let current: Tokens | null = typeof localStorage === 'undefined' ? null : read();
 
 export function getTokens(): Tokens | null {
   return current;
@@ -49,8 +51,8 @@ export function onTokensChange(listener: Listener): () => void {
   return () => listeners.delete(listener);
 }
 
-if (typeof window !== "undefined") {
-  window.addEventListener("storage", (event) => {
+if (typeof window !== 'undefined') {
+  window.addEventListener('storage', (event) => {
     if (event.key !== KEY) return;
     current = read();
     listeners.forEach((listener) => listener(current));

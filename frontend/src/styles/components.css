@@ -229,12 +229,17 @@
 a.card {
   color: inherit;
   display: block;
-  transition: border-color 0.18s, transform 0.18s, box-shadow 0.18s;
+  transition:
+    border-color 0.18s,
+    transform 0.18s,
+    box-shadow 0.18s;
 }
 a.card:hover {
   border-color: var(--blue-line);
   transform: translateY(-2px);
-  box-shadow: var(--shadow), 0 18px 40px -24px rgba(47, 107, 255, 0.55);
+  box-shadow:
+    var(--shadow),
+    0 18px 40px -24px rgba(47, 107, 255, 0.55);
 }
 .card > h2:first-child,
 .card > h3:first-child {
@@ -311,7 +316,7 @@ a.card:hover {
 }
 .divider::before,
 .divider::after {
-  content: "";
+  content: '';
   flex: 1;
   height: 1px;
   background: var(--border);
@@ -333,7 +338,11 @@ a.card:hover {
   line-height: 1.2;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.15s, border-color 0.15s, transform 0.05s, box-shadow 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    transform 0.05s,
+    box-shadow 0.15s;
 }
 .btn:hover {
   background: var(--surface-3);
@@ -614,7 +623,7 @@ a.card:hover {
   overflow: hidden;
 }
 .progress-fill::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);

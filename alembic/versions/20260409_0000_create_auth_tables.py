@@ -7,9 +7,9 @@ Create Date: 2026-04-09 20:55:00
 
 from __future__ import annotations
 
-from alembic import op
 import sqlalchemy as sa
 
+from alembic import op
 
 revision = "20260409_0000"
 down_revision = None
@@ -26,8 +26,12 @@ def upgrade() -> None:
         sa.Column("email", sa.String(length=255), nullable=False),
         sa.Column("password_hash", sa.String(length=255), nullable=False),
         sa.Column("birthday", sa.Date(), nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()),
+        sa.Column(
+            "created_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()
+        ),
+        sa.Column(
+            "updated_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()
+        ),
     )
     op.create_index("uq_users_username_ci", "users", [sa.text("lower(username)")], unique=True)
     op.create_index("uq_users_email_ci", "users", [sa.text("lower(email)")], unique=True)
@@ -39,7 +43,9 @@ def upgrade() -> None:
         sa.Column("family_id", sa.String(length=64), nullable=False),
         sa.Column("access_jti", sa.String(length=64), nullable=False),
         sa.Column("refresh_hash", sa.String(length=255), nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()),
+        sa.Column(
+            "created_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()
+        ),
         sa.Column("last_used_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("access_expires_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("refresh_expires_at", sa.DateTime(timezone=True), nullable=False),

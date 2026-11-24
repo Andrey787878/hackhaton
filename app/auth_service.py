@@ -74,7 +74,9 @@ class AuthService:
         if existing_email is not None:
             raise UserAlreadyExistsError("Пользователь с такими данными уже существует.")
 
-        password_hash = bcrypt.hashpw(raw_password.encode("utf-8"), bcrypt.gensalt()).decode("ascii")
+        password_hash = bcrypt.hashpw(raw_password.encode("utf-8"), bcrypt.gensalt()).decode(
+            "ascii"
+        )
 
         user = User(
             username=username,
@@ -83,9 +85,12 @@ class AuthService:
             birthday=birthday,
             display_name=data.display_name,
         )
-        participant = self._db.scalar(select(Role).where(
-            Role.slug == "participant", Role.deleted_at.is_(None),
-        ))
+        participant = self._db.scalar(
+            select(Role).where(
+                Role.slug == "participant",
+                Role.deleted_at.is_(None),
+            )
+        )
         if participant is None:
             raise AuthPersistenceError("Роль участника отсутствует. Примените миграции.")
         self._db.add(user)
@@ -244,8 +249,7 @@ class AuthService:
         refresh_hash = self._token_service.hash_refresh_token(normalized_refresh_token)
         if (
             session.refresh_hash != refresh_hash
-            or
-            session.revoked_at is not None
+            or session.revoked_at is not None
             or session.refresh_used_at is not None
             or session.refresh_expires_at <= now
             or refresh_payload.exp <= now
@@ -372,9 +376,7 @@ class AuthService:
     def _enforce_session_limit(self, user_id: int) -> None:
         """Соблюдает лимит активных сессий, отзывая самые старые при переполнении."""
         now = self._now_utc()
-        self._db.scalar(
-            select(User.id).where(User.id == user_id).with_for_update()
-        )
+        self._db.scalar(select(User.id).where(User.id == user_id).with_for_update())
         active_sessions = list(
             self._db.scalars(
                 select(AuthSession)
@@ -423,8 +425,10 @@ class AuthService:
             email=user.email,
             birthday=user.birthday,
             display_name=user.display_name,
-            roles=[RoleDTO.model_validate(role, from_attributes=True)
-                   for role in sorted(user.roles, key=lambda role: role.slug)],
+            roles=[
+                RoleDTO.model_validate(role, from_attributes=True)
+                for role in sorted(user.roles, key=lambda role: role.slug)
+            ],
         )
 
     @staticmethod

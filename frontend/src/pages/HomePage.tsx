@@ -1,30 +1,30 @@
-import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import { publicApi } from "../api/hackathons";
-import type { Phase } from "../api/types";
-import { useAuth } from "../auth/AuthContext";
-import { PhaseBadge } from "../components/Badges";
-import { Countdown, phaseAt } from "../components/Countdown";
-import { EmptyState, ErrorBox, Loader } from "../components/Feedback";
-import { Icon } from "../components/Icon";
-import { useAsync } from "../hooks/useAsync";
-import { useServerNow } from "../hooks/useServerNow";
-import { formatDate } from "../utils/format";
-import { hasRole } from "../utils/roles";
+import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { publicApi } from '../api/hackathons';
+import type { Phase } from '../api/types';
+import { useAuth } from '../auth/AuthContext';
+import { PhaseBadge } from '../components/Badges';
+import { Countdown, phaseAt } from '../components/Countdown';
+import { EmptyState, ErrorBox, Loader } from '../components/Feedback';
+import { Icon } from '../components/Icon';
+import { useAsync } from '../hooks/useAsync';
+import { useServerNow } from '../hooks/useServerNow';
+import { formatDate } from '../utils/format';
+import { hasRole } from '../utils/roles';
 
-type Filter = "all" | Phase;
+type Filter = 'all' | Phase;
 const FILTERS: [Filter, string][] = [
-  ["all", "Все"],
-  ["active", "Идут"],
-  ["upcoming", "Скоро"],
-  ["finished", "Завершены"],
+  ['all', 'Все'],
+  ['active', 'Идут'],
+  ['upcoming', 'Скоро'],
+  ['finished', 'Завершены'],
 ];
 
 export function HomePage() {
   const { user } = useAuth();
   const { data, error, loading, reload } = useAsync(() => publicApi.hackathons(100), []);
   const now = useServerNow(5000);
-  const [filter, setFilter] = useState<Filter>("all");
+  const [filter, setFilter] = useState<Filter>('all');
 
   const items = useMemo(
     () =>
@@ -37,11 +37,16 @@ export function HomePage() {
     [data, now],
   );
   const counts = useMemo(() => {
-    const result: Record<Filter, number> = { all: items.length, active: 0, upcoming: 0, finished: 0 };
+    const result: Record<Filter, number> = {
+      all: items.length,
+      active: 0,
+      upcoming: 0,
+      finished: 0,
+    };
     items.forEach(({ phase }) => (result[phase] += 1));
     return result;
   }, [items]);
-  const visible = filter === "all" ? items : items.filter(({ phase }) => phase === filter);
+  const visible = filter === 'all' ? items : items.filter(({ phase }) => phase === filter);
 
   return (
     <div className="page">
@@ -52,12 +57,12 @@ export function HomePage() {
             <Icon name="bolt" size={14} /> Онлайн-хакатоны
           </span>
           <h1>
-            Собери команду. <span className="accent-blue">Сдай решение</span> до{" "}
+            Собери команду. <span className="accent-blue">Сдай решение</span> до{' '}
             <span className="accent-red">дедлайна</span>.
           </h1>
           <p className="lead">
-            Кейсы и критерии от организаторов, команды по invite-коду, приватная сдача архивов, оценки экспертов и
-            рейтинг, который пересчитывается сам.
+            Кейсы и критерии от организаторов, команды по invite-коду, приватная сдача архивов,
+            оценки экспертов и рейтинг, который пересчитывается сам.
           </p>
           <div className="hero-actions">
             {!user && (
@@ -70,12 +75,12 @@ export function HomePage() {
                 </Link>
               </>
             )}
-            {hasRole(user, "participant") && (
+            {hasRole(user, 'participant') && (
               <Link to="/teams" className="btn btn-primary btn-lg">
                 <Icon name="key" size={16} /> Вступить по коду
               </Link>
             )}
-            {hasRole(user, "organizer") && (
+            {hasRole(user, 'organizer') && (
               <Link to="/organizer" className="btn btn-lg btn-danger">
                 <Icon name="plus" size={16} /> Создать хакатон
               </Link>
@@ -107,7 +112,7 @@ export function HomePage() {
               type="button"
               role="tab"
               aria-selected={filter === key}
-              className={filter === key ? "tab active" : "tab"}
+              className={filter === key ? 'tab active' : 'tab'}
               onClick={() => setFilter(key)}
             >
               {label} <span className="tab-count">{counts[key]}</span>
@@ -121,16 +126,20 @@ export function HomePage() {
       {data && visible.length === 0 && (
         <div className="card">
           <EmptyState title="Здесь пока пусто">
-            {filter === "all"
-              ? "Организаторы ещё не опубликовали ни одного хакатона."
-              : "В этой категории сейчас нет хакатонов."}
+            {filter === 'all'
+              ? 'Организаторы ещё не опубликовали ни одного хакатона.'
+              : 'В этой категории сейчас нет хакатонов.'}
           </EmptyState>
         </div>
       )}
 
       <div className="grid cards">
         {visible.map(({ item, phase }) => (
-          <Link key={item.id} to={`/hackathons/${item.id}`} className={`card hack-card phase-${phase}`}>
+          <Link
+            key={item.id}
+            to={`/hackathons/${item.id}`}
+            className={`card hack-card phase-${phase}`}
+          >
             <div className="hack-card-top">
               <PhaseBadge phase={phase} />
               <span className="muted small">#{item.id}</span>
@@ -147,7 +156,7 @@ export function HomePage() {
             </div>
             <div className="hack-card-foot">
               <span className="muted small">
-                {phase === "upcoming" ? "до старта" : phase === "active" ? "до дедлайна" : "итоги"}
+                {phase === 'upcoming' ? 'до старта' : phase === 'active' ? 'до дедлайна' : 'итоги'}
               </span>
               <Countdown compact startsAt={item.starts_at} deadlineAt={item.deadline_at} />
             </div>

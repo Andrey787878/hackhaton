@@ -1,5 +1,5 @@
-from functools import lru_cache
 import os
+from functools import lru_cache
 
 import boto3
 from botocore.config import Config
@@ -17,13 +17,19 @@ class ObjectStorage:
             aws_access_key_id=settings.minio_root_user,
             aws_secret_access_key=settings.minio_root_password,
             region_name="us-east-1",
-            config=Config(signature_version="s3v4", retries={"max_attempts": 2},
-                          connect_timeout=3, read_timeout=15, s3={"addressing_style": "path"}),
+            config=Config(
+                signature_version="s3v4",
+                retries={"max_attempts": 2},
+                connect_timeout=3,
+                read_timeout=15,
+                s3={"addressing_style": "path"},
+            ),
         )
 
     def put(self, key: str, body, size: int, content_type: str):
-        self.client.put_object(Bucket=self.bucket, Key=key, Body=body,
-                               ContentLength=size, ContentType=content_type)
+        self.client.put_object(
+            Bucket=self.bucket, Key=key, Body=body, ContentLength=size, ContentType=content_type
+        )
 
     def delete(self, key: str):
         self.client.delete_object(Bucket=self.bucket, Key=key)

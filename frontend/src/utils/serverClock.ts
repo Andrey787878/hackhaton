@@ -1,7 +1,7 @@
 // Серверные часы (FE-01): дедлайн решает сервер, поэтому таймер считает время
 // не по часам компьютера, а по смещению относительно /api/v1/time.
 
-import { publicApi } from "../api/hackathons";
+import { publicApi } from '../api/hackathons';
 
 let offsetMs = 0;
 let synced = false;

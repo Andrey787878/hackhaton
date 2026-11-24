@@ -9,10 +9,10 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 
+from app.bootstrap import provision_user
 from app.db import SessionLocal
 from app.main import app
 from app.models import Role, User, UserRole
-from app.bootstrap import provision_user
 from app.schemas import RegisterRequest
 
 
@@ -38,9 +38,13 @@ def account(client):
 
 
 def login(client, payload):
-    response = client.post("/api/v1/auth/login", json={
-        "username": payload["username"], "password": payload["password"],
-    })
+    response = client.post(
+        "/api/v1/auth/login",
+        json={
+            "username": payload["username"],
+            "password": payload["password"],
+        },
+    )
     assert response.status_code == 200, response.text
     return response.json()
 
@@ -73,7 +77,12 @@ def test_refresh_rotation_and_reuse(client, account):
     assert new_tokens["refresh_token"] != tokens["refresh_token"]
     assert client.get("/api/v1/auth/me", headers=bearer(tokens)).status_code == 403
     assert client.get("/api/v1/auth/me", headers=bearer(new_tokens)).status_code == 200
-    assert client.post("/api/v1/auth/refresh", json={"refresh_token": tokens["refresh_token"]}).status_code == 403
+    assert (
+        client.post(
+            "/api/v1/auth/refresh", json={"refresh_token": tokens["refresh_token"]}
+        ).status_code
+        == 403
+    )
     assert client.get("/api/v1/auth/me", headers=bearer(new_tokens)).status_code == 403
 
 
@@ -94,7 +103,9 @@ def test_user_role_cannot_assign_admin(client, account):
         db.add(UserRole(user_id=user["id"], role_id=basic_role.id, created_by=user["id"]))
         db.commit()
     headers = bearer(login(client, payload))
-    response = client.post(f"/api/v1/admin/user/{user['id']}/role", json={"role_id": admin_id}, headers=headers)
+    response = client.post(
+        f"/api/v1/admin/user/{user['id']}/role", json={"role_id": admin_id}, headers=headers
+    )
     assert response.status_code == 403, response.text
     assert client.get("/api/v1/admin/policy/role", headers=headers).status_code == 403
 
@@ -102,9 +113,16 @@ def test_user_role_cannot_assign_admin(client, account):
 def test_wrong_password_and_duplicate_registration(client, account):
     payload, _ = account
     assert client.post("/api/v1/auth/register", json=payload).status_code == 422
-    assert client.post("/api/v1/auth/login", json={
-        "username": payload["username"], "password": "Wrong-password-123!",
-    }).status_code == 401
+    assert (
+        client.post(
+            "/api/v1/auth/login",
+            json={
+                "username": payload["username"],
+                "password": "Wrong-password-123!",
+            },
+        ).status_code
+        == 401
+    )
 
 
 def test_admin_permission_grant_and_revocation(client, account):
@@ -133,8 +151,12 @@ def test_long_utf8_password_is_rejected(client, account):
 
 def new_profile(prefix="user"):
     username = f"{prefix}_{secrets.token_hex(6)}"
-    return RegisterRequest(username=username, email=f"{username}@example.com",
-                           password="Test-password-123!", c_password="Test-password-123!")
+    return RegisterRequest(
+        username=username,
+        email=f"{username}@example.com",
+        password="Test-password-123!",
+        c_password="Test-password-123!",
+    )
 
 
 def test_registration_has_participant_role_and_optional_birthday(client):
@@ -147,7 +169,10 @@ def test_registration_has_participant_role_and_optional_birthday(client):
     assert user["display_name"] == "Андрей"
     assert [role["slug"] for role in user["roles"]] == ["participant"]
     tokens = login(client, {**payload, "username": payload["username"].upper()})
-    assert client.get("/api/v1/auth/me", headers=bearer(tokens)).json()["roles"][0]["slug"] == "participant"
+    assert (
+        client.get("/api/v1/auth/me", headers=bearer(tokens)).json()["roles"][0]["slug"]
+        == "participant"
+    )
 
 
 @pytest.mark.parametrize("extra", [{"roles": ["admin"]}, {"role_id": 1}, {"is_admin": True}])
@@ -160,12 +185,23 @@ def test_registration_rejects_privilege_fields(client, extra):
 
 def test_profile_updates_only_allowed_fields(client, account):
     headers = bearer(login(client, account[0]))
-    response = client.patch("/api/v1/auth/me", json={"display_name": "Имя участника"}, headers=headers)
+    response = client.patch(
+        "/api/v1/auth/me", json={"display_name": "Имя участника"}, headers=headers
+    )
     assert response.status_code == 200, response.text
     assert response.json()["birthday"] == "2000-01-01"
     assert response.json()["display_name"] == "Имя участника"
-    assert client.patch("/api/v1/auth/me", json={"birthday": None}, headers=headers).json()["birthday"] is None
-    for changes in ({"roles": ["admin"]}, {"id": 1}, {"email": "other@example.com"}, {}, {"birthday": "2999-01-01"}):
+    assert (
+        client.patch("/api/v1/auth/me", json={"birthday": None}, headers=headers).json()["birthday"]
+        is None
+    )
+    for changes in (
+        {"roles": ["admin"]},
+        {"id": 1},
+        {"email": "other@example.com"},
+        {},
+        {"birthday": "2999-01-01"},
+    ):
         assert client.patch("/api/v1/auth/me", json=changes, headers=headers).status_code == 422
     assert client.patch("/api/v1/auth/me", json={"display_name": "Anon"}).status_code == 401
     assert client.get("/api/v1/auth/me", headers=headers).json()["id"] == account[1]["id"]
@@ -181,10 +217,22 @@ def test_platform_roles_cannot_manage_access(client, role_slug):
     assert [role["slug"] for role in tokens["user"]["roles"]] == [role_slug]
     headers = bearer(tokens)
     assert client.get("/api/v1/admin/user", headers=headers).status_code == 403
-    assert client.post(f"/api/v1/admin/user/{tokens['user']['id']}/role",
-                       json={"role_id": admin_id}, headers=headers).status_code == 403
-    assert client.post("/api/v1/admin/policy/role",
-                       json={"name": "Forbidden", "slug": "forbidden"}, headers=headers).status_code == 403
+    assert (
+        client.post(
+            f"/api/v1/admin/user/{tokens['user']['id']}/role",
+            json={"role_id": admin_id},
+            headers=headers,
+        ).status_code
+        == 403
+    )
+    assert (
+        client.post(
+            "/api/v1/admin/policy/role",
+            json={"name": "Forbidden", "slug": "forbidden"},
+            headers=headers,
+        ).status_code
+        == 403
+    )
 
 
 def test_admin_assigns_and_revokes_expert_through_api(client, account):
@@ -217,8 +265,17 @@ def test_operator_provisioning_is_atomic_and_never_promotes_existing_user(client
 
 def test_create_admin_cli_and_idempotency(client):
     profile = new_profile("cliadmin")
-    command = [sys.executable, "-m", "app.bootstrap", "create-admin",
-               "--username", profile.username, "--email", str(profile.email), "--password-stdin"]
+    command = [
+        sys.executable,
+        "-m",
+        "app.bootstrap",
+        "create-admin",
+        "--username",
+        profile.username,
+        "--email",
+        str(profile.email),
+        "--password-stdin",
+    ]
     for password in (profile.password, "Different-password-123!"):
         result = subprocess.run(command, input=password + "\n", text=True, capture_output=True)
         assert result.returncode == 0, result.stderr
@@ -241,6 +298,9 @@ def test_seed_demo_cli_is_repeatable(client):
 
 def test_birthdays_are_optional_without_lab_age_restriction(client):
     payload = new_profile().model_dump(mode="json")
-    assert client.post("/api/v1/auth/register", json={**payload, "birthday": "2999-01-01"}).status_code == 422
+    assert (
+        client.post("/api/v1/auth/register", json={**payload, "birthday": "2999-01-01"}).status_code
+        == 422
+    )
     response = client.post("/api/v1/auth/register", json={**payload, "birthday": "2025-01-01"})
     assert response.status_code == 201, response.text

@@ -1,17 +1,18 @@
-import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { Link, useParams } from "react-router-dom";
-import { messageOf } from "../api/errors";
-import { expertApi } from "../api/scoring";
-import { submissionsApi } from "../api/teams";
-import type { Assignment } from "../api/types";
-import { Alert, EmptyState, ErrorBox, Loader } from "../components/Feedback";
-import { Icon } from "../components/Icon";
-import { useAsync } from "../hooks/useAsync";
-import { formatBytes, formatDate, formatDateSeconds, formatUtc } from "../utils/format";
-import { expertTotal, inRange, weightShare } from "../utils/scoring";
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { messageOf } from '../api/errors';
+import { expertApi } from '../api/scoring';
+import { submissionsApi } from '../api/teams';
+import type { Assignment } from '../api/types';
+import { Alert, EmptyState, ErrorBox, Loader } from '../components/Feedback';
+import { Icon } from '../components/Icon';
+import { useAsync } from '../hooks/useAsync';
+import { formatBytes, formatDate, formatDateSeconds, formatUtc } from '../utils/format';
+import { expertTotal, inRange, weightShare } from '../utils/scoring';
 
 function AssignmentStatus({ assignment }: { assignment: Assignment }) {
-  if (assignment.complete) return <span className="badge badge-active">оценено · {assignment.total}</span>;
+  if (assignment.complete)
+    return <span className="badge badge-active">оценено · {assignment.total}</span>;
   if (assignment.scores.length > 0) return <span className="badge badge-upcoming">черновик</span>;
   return <span className="badge badge-finished">ждёт оценки</span>;
 }
@@ -41,13 +42,18 @@ export function ExpertPage() {
       {assignments.data && items.length === 0 && (
         <div className="card">
           <EmptyState icon="star" title="Назначений пока нет">
-            Организатор назначает экспертов после дедлайна хакатона. Вы видите только свои назначения.
+            Организатор назначает экспертов после дедлайна хакатона. Вы видите только свои
+            назначения.
           </EmptyState>
         </div>
       )}
       <div className="grid cards">
         {items.map((item) => (
-          <Link to={`/expert/assignments/${item.id}`} key={item.id} className="card assignment-card">
+          <Link
+            to={`/expert/assignments/${item.id}`}
+            key={item.id}
+            className="card assignment-card"
+          >
             <div className="row between gap">
               <span className="muted small">Назначение #{item.id}</span>
               <AssignmentStatus assignment={item} />
@@ -95,13 +101,15 @@ export function AssignmentPage() {
 
   const criteria = assignment.data?.criteria ?? [];
   const preview = useMemo(() => expertTotal(criteria, values), [criteria, values]);
-  const invalid = criteria.filter((criterion) => values[criterion.id] !== undefined && !inRange(criterion, values[criterion.id]!));
+  const invalid = criteria.filter(
+    (criterion) => values[criterion.id] !== undefined && !inRange(criterion, values[criterion.id]!),
+  );
   const filled = criteria.filter((criterion) => values[criterion.id] !== undefined).length;
 
   const save = async (event: FormEvent) => {
     event.preventDefault();
     if (invalid.length) {
-      setError("Есть баллы вне допустимого диапазона.");
+      setError('Есть баллы вне допустимого диапазона.');
       return;
     }
     setBusy(true);
@@ -116,7 +124,7 @@ export function AssignmentPage() {
       setSaved(
         result.complete
           ? `Оценка сохранена. Итог эксперта по данным сервера: ${result.total}. Рейтинг обновлён.`
-          : "Черновик сохранён. В рейтинг попадёт только полная оценка всех критериев.",
+          : 'Черновик сохранён. В рейтинг попадёт только полная оценка всех критериев.',
       );
     } catch (err) {
       setError(messageOf(err));
@@ -153,26 +161,29 @@ export function AssignmentPage() {
             <AssignmentStatus assignment={assignment.data} />
           </div>
           <p className="muted small">
-            Баллы — целые числа в диапазоне каждого критерия. Сервер отклонит значение вне диапазона и сам рассчитает
-            итог: вручную его задать нельзя.
+            Баллы — целые числа в диапазоне каждого критерия. Сервер отклонит значение вне диапазона
+            и сам рассчитает итог: вручную его задать нельзя.
           </p>
 
           {criteria.map((criterion) => {
             const value = values[criterion.id];
             const bad = value !== undefined && !inRange(criterion, value);
             return (
-              <div className={bad ? "criterion invalid" : "criterion"} key={criterion.id}>
+              <div className={bad ? 'criterion invalid' : 'criterion'} key={criterion.id}>
                 <div className="criterion-head">
                   <div>
                     <div className="strong">{criterion.title}</div>
-                    {criterion.description && <div className="muted small">{criterion.description}</div>}
+                    {criterion.description && (
+                      <div className="muted small">{criterion.description}</div>
+                    )}
                   </div>
                   <div className="criterion-meta">
                     <span className="chip mono">
                       {criterion.min_score}–{criterion.max_score}
                     </span>
                     <span className="chip mono">
-                      вес {Number(criterion.weight)} · {Math.round(weightShare(criteria, criterion) * 100)}%
+                      вес {Number(criterion.weight)} ·{' '}
+                      {Math.round(weightShare(criteria, criterion) * 100)}%
                     </span>
                   </div>
                 </div>
@@ -183,9 +194,11 @@ export function AssignmentPage() {
                     max={criterion.max_score}
                     step={1}
                     value={value ?? criterion.min_score}
-                    onChange={(e) => setValues((prev) => ({ ...prev, [criterion.id]: Number(e.target.value) }))}
+                    onChange={(e) =>
+                      setValues((prev) => ({ ...prev, [criterion.id]: Number(e.target.value) }))
+                    }
                     aria-label={`${criterion.title}: ползунок`}
-                    className={value === undefined ? "unset" : ""}
+                    className={value === undefined ? 'unset' : ''}
                   />
                   <input
                     type="number"
@@ -193,12 +206,12 @@ export function AssignmentPage() {
                     min={criterion.min_score}
                     max={criterion.max_score}
                     step={1}
-                    value={value ?? ""}
+                    value={value ?? ''}
                     placeholder="—"
                     onChange={(e) =>
                       setValues((prev) => ({
                         ...prev,
-                        [criterion.id]: e.target.value === "" ? undefined : Number(e.target.value),
+                        [criterion.id]: e.target.value === '' ? undefined : Number(e.target.value),
                       }))
                     }
                     aria-label={`${criterion.title}: балл`}
@@ -217,7 +230,7 @@ export function AssignmentPage() {
           {saved && <Alert tone="success">{saved}</Alert>}
           <div className="row gap wrap">
             <button className="btn btn-primary btn-lg" disabled={busy}>
-              <Icon name="check" size={16} /> {busy ? "Сохраняем…" : "Сохранить оценку"}
+              <Icon name="check" size={16} /> {busy ? 'Сохраняем…' : 'Сохранить оценку'}
             </button>
             <button
               type="button"
@@ -234,13 +247,14 @@ export function AssignmentPage() {
         <aside className="detail-side">
           <div className="card total-card">
             <span className="eyebrow">Предварительный итог</span>
-            <div className="total-value mono">{preview === null ? "—" : preview.toFixed(2)}</div>
+            <div className="total-value mono">{preview === null ? '—' : preview.toFixed(2)}</div>
             <div className="muted small">
               заполнено {filled} из {criteria.length}
               {assignment.data.total && (
                 <>
-                  {" "}
-                  · сохранено на сервере: <span className="mono strong">{assignment.data.total}</span>
+                  {' '}
+                  · сохранено на сервере:{' '}
+                  <span className="mono strong">{assignment.data.total}</span>
                 </>
               )}
             </div>
@@ -267,7 +281,12 @@ export function AssignmentPage() {
               </div>
             </dl>
             {submission.url && (
-              <a className="btn btn-ghost btn-block" href={submission.url} target="_blank" rel="noreferrer noopener">
+              <a
+                className="btn btn-ghost btn-block"
+                href={submission.url}
+                target="_blank"
+                rel="noreferrer noopener"
+              >
                 <Icon name="link" size={14} /> Открыть ссылку
               </a>
             )}
@@ -275,9 +294,14 @@ export function AssignmentPage() {
               <button
                 type="button"
                 className="btn btn-primary btn-block"
-                onClick={() => submissionsApi.downloadArchive(submission).catch((err) => setDownloadError(messageOf(err)))}
+                onClick={() =>
+                  submissionsApi
+                    .downloadArchive(submission)
+                    .catch((err) => setDownloadError(messageOf(err)))
+                }
               >
-                <Icon name="download" size={14} /> {submission.archive.filename} · {formatBytes(submission.archive.size_bytes)}
+                <Icon name="download" size={14} /> {submission.archive.filename} ·{' '}
+                {formatBytes(submission.archive.size_bytes)}
               </button>
             )}
             {downloadError && <Alert tone="error">{downloadError}</Alert>}

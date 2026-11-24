@@ -1,17 +1,17 @@
-import type { User } from "../api/types";
+import type { User } from '../api/types';
 
 export const ROLE_LABELS: Record<string, string> = {
-  admin: "Администратор",
-  organizer: "Организатор",
-  participant: "Участник",
-  expert: "Эксперт",
-  user: "Пользователь",
-  guest: "Гость",
+  admin: 'Администратор',
+  organizer: 'Организатор',
+  participant: 'Участник',
+  expert: 'Эксперт',
+  user: 'Пользователь',
+  guest: 'Гость',
 };
 
 export function hasRole(user: User | null | undefined, ...slugs: string[]): boolean {
   if (!user) return false;
-  return user.roles.some((role) => role.slug === "admin" || slugs.includes(role.slug));
+  return user.roles.some((role) => role.slug === 'admin' || slugs.includes(role.slug));
 }
 
 export function roleLabel(slug: string): string {

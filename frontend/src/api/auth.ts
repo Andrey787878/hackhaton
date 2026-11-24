@@ -1,5 +1,5 @@
-import { api } from "./client";
-import type { AuthSuccess, SessionMeta, User } from "./types";
+import { api } from './client';
+import type { AuthSuccess, SessionMeta, User } from './types';
 
 export interface RegisterInput {
   username: string;
@@ -17,11 +17,11 @@ export interface ProfileInput {
 
 export const authApi = {
   login: (username: string, password: string) =>
-    api.post<AuthSuccess>("/auth/login", { username, password }, { auth: false }),
-  register: (data: RegisterInput) => api.post<User>("/auth/register", data, { auth: false }),
-  me: () => api.get<User>("/auth/me"),
-  updateMe: (data: ProfileInput) => api.patch<User>("/auth/me", data),
-  sessions: () => api.get<{ items: SessionMeta[] }>("/auth/tokens"),
-  logout: () => api.post<{ message: string }>("/auth/out"),
-  logoutAll: () => api.post<{ message: string; revoked_count: number }>("/auth/out_all"),
+    api.post<AuthSuccess>('/auth/login', { username, password }, { auth: false }),
+  register: (data: RegisterInput) => api.post<User>('/auth/register', data, { auth: false }),
+  me: () => api.get<User>('/auth/me'),
+  updateMe: (data: ProfileInput) => api.patch<User>('/auth/me', data),
+  sessions: () => api.get<{ items: SessionMeta[] }>('/auth/tokens'),
+  logout: () => api.post<{ message: string }>('/auth/out'),
+  logoutAll: () => api.post<{ message: string; revoked_count: number }>('/auth/out_all'),
 };

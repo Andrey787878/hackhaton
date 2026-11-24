@@ -1,16 +1,16 @@
-import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ApiError, messageOf } from "../api/errors";
-import { organizerApi } from "../api/hackathons";
-import type { Hackathon, HackathonInput } from "../api/types";
-import { PhaseBadge } from "../components/Badges";
-import { Countdown, phaseAt } from "../components/Countdown";
-import { Alert, EmptyState, ErrorBox, Loader } from "../components/Feedback";
-import { Icon } from "../components/Icon";
-import { useAsync } from "../hooks/useAsync";
-import { useServerNow } from "../hooks/useServerNow";
-import { formatDate, fromLocalInput, toLocalInput } from "../utils/format";
-import { serverNow } from "../utils/serverClock";
+import { useState, type FormEvent } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ApiError, messageOf } from '../api/errors';
+import { organizerApi } from '../api/hackathons';
+import type { Hackathon, HackathonInput } from '../api/types';
+import { PhaseBadge } from '../components/Badges';
+import { Countdown, phaseAt } from '../components/Countdown';
+import { Alert, EmptyState, ErrorBox, Loader } from '../components/Feedback';
+import { Icon } from '../components/Icon';
+import { useAsync } from '../hooks/useAsync';
+import { useServerNow } from '../hooks/useServerNow';
+import { formatDate, fromLocalInput, toLocalInput } from '../utils/format';
+import { serverNow } from '../utils/serverClock';
 
 export interface HackathonFormValue {
   title: string;
@@ -23,7 +23,12 @@ export function emptyHackathonForm(): HackathonFormValue {
   const start = new Date(serverNow() + 24 * 3600 * 1000);
   start.setMinutes(0, 0, 0);
   const end = new Date(start.getTime() + 48 * 3600 * 1000);
-  return { title: "", description: "", starts_at: toLocalInput(start.toISOString()), deadline_at: toLocalInput(end.toISOString()) };
+  return {
+    title: '',
+    description: '',
+    starts_at: toLocalInput(start.toISOString()),
+    deadline_at: toLocalInput(end.toISOString()),
+  };
 }
 
 export function HackathonForm({
@@ -60,7 +65,7 @@ export function HackathonForm({
       return;
     }
     if (new Date(data.deadline_at) <= new Date(data.starts_at)) {
-      setFields({ deadline_at: "Дедлайн должен быть позже начала" });
+      setFields({ deadline_at: 'Дедлайн должен быть позже начала' });
       return;
     }
     setBusy(true);
@@ -76,32 +81,48 @@ export function HackathonForm({
 
   return (
     <form className="form" onSubmit={submit}>
-      <label className={fields.title ? "field invalid" : "field"}>
+      <label className={fields.title ? 'field invalid' : 'field'}>
         <span>Название</span>
-        <input value={value.title} onChange={set("title")} maxLength={200} required />
+        <input value={value.title} onChange={set('title')} maxLength={200} required />
         {fields.title && <small>{fields.title}</small>}
       </label>
-      <label className={fields.description ? "field invalid" : "field"}>
+      <label className={fields.description ? 'field invalid' : 'field'}>
         <span>Описание</span>
-        <textarea value={value.description} onChange={set("description")} rows={4} maxLength={20000} required />
+        <textarea
+          value={value.description}
+          onChange={set('description')}
+          rows={4}
+          maxLength={20000}
+          required
+        />
         {fields.description && <small>{fields.description}</small>}
       </label>
       <div className="form-row">
-        <label className={fields.starts_at ? "field invalid" : "field"}>
+        <label className={fields.starts_at ? 'field invalid' : 'field'}>
           <span>Начало (ваше время)</span>
-          <input type="datetime-local" value={value.starts_at} onChange={set("starts_at")} required />
+          <input
+            type="datetime-local"
+            value={value.starts_at}
+            onChange={set('starts_at')}
+            required
+          />
           {fields.starts_at && <small>{fields.starts_at}</small>}
         </label>
-        <label className={fields.deadline_at ? "field invalid" : "field"}>
+        <label className={fields.deadline_at ? 'field invalid' : 'field'}>
           <span>Дедлайн сдачи</span>
-          <input type="datetime-local" value={value.deadline_at} onChange={set("deadline_at")} required />
+          <input
+            type="datetime-local"
+            value={value.deadline_at}
+            onChange={set('deadline_at')}
+            required
+          />
           {fields.deadline_at && <small>{fields.deadline_at}</small>}
         </label>
       </div>
       <p className="muted small">Даты отправляются в UTC; решение о сроках принимает сервер.</p>
       {error && <Alert tone="error">{error}</Alert>}
       <button className="btn btn-primary" disabled={busy}>
-        {busy ? "Сохраняем…" : submitLabel}
+        {busy ? 'Сохраняем…' : submitLabel}
       </button>
     </form>
   );
@@ -111,7 +132,11 @@ function StatusLine({ item, now }: { item: Hackathon; now: number }) {
   const phase = phaseAt(now, item.starts_at, item.deadline_at);
   return (
     <div className="row gap wrap">
-      {item.is_published ? <PhaseBadge phase={phase} /> : <span className="badge badge-draft">черновик</span>}
+      {item.is_published ? (
+        <PhaseBadge phase={phase} />
+      ) : (
+        <span className="badge badge-draft">черновик</span>
+      )}
       <span className="muted small">
         {formatDate(item.starts_at)} — {formatDate(item.deadline_at)}
       </span>
@@ -134,8 +159,12 @@ export function OrganizerPage() {
           </span>
           <h1>Мои хакатоны</h1>
         </div>
-        <button type="button" className="btn btn-danger" onClick={() => setCreating((open) => !open)}>
-          <Icon name={creating ? "x" : "plus"} size={16} /> {creating ? "Закрыть" : "Новый хакатон"}
+        <button
+          type="button"
+          className="btn btn-danger"
+          onClick={() => setCreating((open) => !open)}
+        >
+          <Icon name={creating ? 'x' : 'plus'} size={16} /> {creating ? 'Закрыть' : 'Новый хакатон'}
         </button>
       </div>
 
@@ -181,7 +210,7 @@ export function OrganizerPage() {
               <h3>{item.title}</h3>
               <StatusLine item={item} now={now} />
             </div>
-            {phaseAt(now, item.starts_at, item.deadline_at) !== "finished" && (
+            {phaseAt(now, item.starts_at, item.deadline_at) !== 'finished' && (
               <Countdown compact startsAt={item.starts_at} deadlineAt={item.deadline_at} />
             )}
             <Icon name="chevron" />

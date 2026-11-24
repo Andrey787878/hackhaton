@@ -81,11 +81,7 @@ class RbacService:
     def list_users(self) -> list[UserDTO]:
         """Возвращает всех пользователей с активными ролями."""
         users = list(
-            self._db.scalars(
-                select(User)
-                .options(selectinload(User.roles))
-                .order_by(User.id.asc())
-            )
+            self._db.scalars(select(User).options(selectinload(User.roles)).order_by(User.id.asc()))
         )
         return [self._to_user_dto(user) for user in users]
 
@@ -131,7 +127,9 @@ class RbacService:
                 )
             )
             self._commit_or_rollback(
-                integrity_error=UserRoleAlreadyExistsError("У пользователя уже есть такая активная роль."),
+                integrity_error=UserRoleAlreadyExistsError(
+                    "У пользователя уже есть такая активная роль."
+                ),
             )
             return self._to_role_dto(role)
 
@@ -178,11 +176,7 @@ class RbacService:
     def list_roles(self) -> RoleCollectionDTO:
         """Возвращает список активных ролей."""
         roles = list(
-            self._db.scalars(
-                select(Role)
-                .where(Role.deleted_at.is_(None))
-                .order_by(Role.id.asc())
-            )
+            self._db.scalars(select(Role).where(Role.deleted_at.is_(None)).order_by(Role.id.asc()))
         )
         items = [self._to_role_dto(role) for role in roles]
         return RoleCollectionDTO(items=items, total=len(items))

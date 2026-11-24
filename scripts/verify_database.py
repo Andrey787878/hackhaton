@@ -5,6 +5,7 @@ The default is read-only. --exercise briefly commits a uniquely named test
 user and removes it in finally; use a dedicated development/test database.
 No credentials, password hashes or tokens are printed.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -13,15 +14,14 @@ import secrets
 from pathlib import Path
 
 import bcrypt
+from sqlalchemy import delete, inspect, select, text
+
 from alembic.autogenerate import compare_metadata
 from alembic.config import Config
 from alembic.migration import MigrationContext
 from alembic.script import ScriptDirectory
-from sqlalchemy import delete, inspect, select, text
-
-from app.db import Base, SessionLocal, engine
 from app import models  # registers all ORM tables
-
+from app.db import Base, SessionLocal, engine
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -53,7 +53,9 @@ def verify_schema() -> dict:
             "revision": sorted(actual_heads),
             "application_tables": len(Base.metadata.tables),
             "foreign_keys": sum(len(inspector.get_foreign_keys(t)) for t in Base.metadata.tables),
-            "check_constraints": sum(len(inspector.get_check_constraints(t)) for t in Base.metadata.tables),
+            "check_constraints": sum(
+                len(inspector.get_check_constraints(t)) for t in Base.metadata.tables
+            ),
             "roles": sorted(roles),
             "schema_matches_models": True,
         }
@@ -65,8 +67,12 @@ def exercise_persistence() -> dict:
     password_hash = bcrypt.hashpw(secrets.token_bytes(32), bcrypt.gensalt()).decode("ascii")
     try:
         with SessionLocal.begin() as db:
-            user = models.User(username=username, email=f"{username}@example.invalid",
-                               password_hash=password_hash, display_name="Database smoke test")
+            user = models.User(
+                username=username,
+                email=f"{username}@example.invalid",
+                password_hash=password_hash,
+                display_name="Database smoke test",
+            )
             db.add(user)
             db.flush()
             user_id = user.id
@@ -82,7 +88,9 @@ def exercise_persistence() -> dict:
             db.flush()
             db.rollback()
         with engine.connect() as connection:
-            value = connection.scalar(select(models.User.display_name).where(models.User.id == user_id))
+            value = connection.scalar(
+                select(models.User.display_name).where(models.User.id == user_id)
+            )
             if value != "Database smoke test":
                 raise RuntimeError("Rollback did not restore the committed value.")
     finally:
@@ -91,14 +99,19 @@ def exercise_persistence() -> dict:
         with SessionLocal.begin() as db:
             db.execute(delete(models.User).where(models.User.username == username))
     with engine.connect() as connection:
-        if connection.scalar(select(models.User.id).where(models.User.username == username)) is not None:
+        if (
+            connection.scalar(select(models.User.id).where(models.User.username == username))
+            is not None
+        ):
             raise RuntimeError("Smoke-test cleanup failed.")
     return {"commit_and_read": "passed", "rollback": "passed", "cleanup": "passed"}
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--exercise", action="store_true", help="Commit/read/rollback/cleanup in a test database")
+    parser.add_argument(
+        "--exercise", action="store_true", help="Commit/read/rollback/cleanup in a test database"
+    )
     args = parser.parse_args()
     result = verify_schema()
     if args.exercise:

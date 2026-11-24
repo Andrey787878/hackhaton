@@ -1,5 +1,5 @@
-import type { Criterion } from "../api/types";
-import { weightShare } from "../utils/scoring";
+import type { Criterion } from '../api/types';
+import { weightShare } from '../utils/scoring';
 
 /** Критерии кейса: диапазон баллов, вес и доля в итоге (FE-04). */
 export function CriteriaTable({ criteria }: { criteria: Criterion[] }) {
@@ -20,7 +20,9 @@ export function CriteriaTable({ criteria }: { criteria: Criterion[] }) {
             <tr key={criterion.id}>
               <td>
                 <div className="strong">{criterion.title}</div>
-                {criterion.description && <div className="muted small">{criterion.description}</div>}
+                {criterion.description && (
+                  <div className="muted small">{criterion.description}</div>
+                )}
               </td>
               <td className="num mono">
                 {criterion.min_score}–{criterion.max_score}
@@ -29,9 +31,13 @@ export function CriteriaTable({ criteria }: { criteria: Criterion[] }) {
               <td className="num">
                 <div className="share">
                   <div className="share-bar">
-                    <div style={{ width: `${Math.round(weightShare(criteria, criterion) * 100)}%` }} />
+                    <div
+                      style={{ width: `${Math.round(weightShare(criteria, criterion) * 100)}%` }}
+                    />
                   </div>
-                  <span className="mono">{Math.round(weightShare(criteria, criterion) * 100)}%</span>
+                  <span className="mono">
+                    {Math.round(weightShare(criteria, criterion) * 100)}%
+                  </span>
                 </div>
               </td>
             </tr>
